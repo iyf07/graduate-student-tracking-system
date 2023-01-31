@@ -7,7 +7,7 @@ app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 
 app.get('/', async(req, res) => {
-    res.render('main');
+    res.render('course-select');
 })
 
 app.listen(port, () => {

@@ -5,6 +5,7 @@ const port = 3000;
 
 app.engine('ejs', engine);
 app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', async(req, res) => {
     res.render('course-select');

@@ -12,43 +12,119 @@
 </head>
 <body>
 <div class="container">
-    <form>
+    <div class="row">
         <div class="mb-3">
-            <label for="courseSelect" class="form-label">Course Name</label>
-            <select class="form10-select form-select" multiple aria-label="multiple select example" id="courseSelect"
-                    required>
-                <option value="0">INLS 000</option>
-                <option value="1">INLS 001</option>
-                <option value="2">INLS 002</option>
-            </select>
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title text-center">
+Graduate Student Tracking System
+                    </h3>
+                </div>
+            </div>
         </div>
+    </div>
+    <div class="row">
+        <div class="mb-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Add Courses</h5>
+                    <p class="card-text">Some text here.</p>
+                    <div class="mb-3">
+                        <label for="programSelect" class="form-label">Program</label>
+                        <select class="form10-select form-select" aria-label=".form-select example" id="programSelect"
+                                required>
+                            <option value="msls">MSLS</option>
+                            <option value="msis">MSIS</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="specializationSelect" class="form-label">Specialization</label>
+                        <select class="form10-select form-select" aria-label=".form-select example"
+                                id="specializationSelect"
+                                required>
+                            <option value="0">None</option>
+                            <option value="1">2</option>
+                            <option value="2">3</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="capstoneSelect" class="form-label">Capstone Track</label>
+                        <select class="form10-select form-select" aria-label=".form-select example" id="capstoneSelect"
+                                required>
+                            <option value="research">Independent Research</option>
+                            <option value="practicum">Practicum Experience</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="subjectSelect" class="form-label">Course</label>
+                        <div class="col-5">
+                            <select class="form10-select form-select" aria-label=".form-select example"
+                                    id="subjectSelect" required>
+                                <option value="inls">INLS</option>
+                                <option value="comp">COMP</option>
+                            </select>
+                        </div>
+                        <div class="col-5">
+                            <select class="form10-select form-select" aria-label=".form-select example"
+                                    id="courseSelect" required>
+                                <option value="000">000</option>
+                                <option value="001">001</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <button onclick="addCourse()" class="btn btn-primary mb-3">Add</button>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary mb-3">Generate Degree Audit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Selected Courses</h5>
+                    <p class="card-text">Some text here.</p>
+                    <ul class="mb-3 list-group list-group-flush" id="courseSection">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="mb-3">
-            <label for="programSelect" class="form-label">Program</label>
-            <select class="form10-select form-select" aria-label=".form-select example" id="programSelect" required>
-                <option value="0">MSLS</option>
-                <option value="1">MSIS</option>
-            </select>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Degree Audit</h5>
+                    <p class="card-text">Some text here.</p>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="specializationSelect" class="form-label">Specialization</label>
-            <select class="form10-select form-select" aria-label=".form-select example" id="specializationSelect"
-                    required>
-                <option value="0">None</option>
-                <option value="1">2</option>
-                <option value="2">3</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="capstoneSelect" class="form-label">Capstone Track</label>
-            <select class="form10-select form-select" aria-label=".form-select example" id="capstoneSelect" required>
-                <option value="0">Independent research</option>
-                <option value="1">Practicum experience</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <button class="btn btn-primary mb-3">Generate degree audit</button>
-        </div>
-    </form>
+    </div>
 </div>
+
+
 </body>
 </html>
+
+<script>
+    function addCourse() {
+        const removeButton = document.createElement("button");
+        const removeButtonText = document.createTextNode("Remove");
+        const courseSection = document.getElementById("courseSection");
+        const courseNode = document.createElement("li");
+        const subject = document.getElementById("subjectSelect");
+        const course = document.getElementById("courseSelect");
+        const courseNodeText = document.createTextNode(subject.options[subject.selectedIndex].text + " " + course.options[course.selectedIndex].text);
+        courseNode.className = "list-group-item";
+        removeButton.className = "btn btn-danger btn-sm right";
+        removeButton.addEventListener("click", function () {
+            courseSection.removeChild(courseNode);
+        });
+        courseNode.append(courseNodeText);
+        removeButton.append(removeButtonText);
+        courseNode.append(removeButton)
+        courseSection.appendChild(courseNode);
+    }
+</script>

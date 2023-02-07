@@ -139,6 +139,7 @@
             courseAdd.value = course.options[course.selectedIndex].text;
         }
         courseNode.className = "list-group-item";
+        courseNode.id = course.options[course.selectedIndex].text;
         removeButton.className = "btn btn-danger btn-sm right";
         removeButton.addEventListener("click", function () {
             let newValue = [];
@@ -158,6 +159,8 @@
 
     // "Remove" button
     function remove(el) {
+        // const courseSection = document.getElementById("courseSection");
+
         const courseAdd = document.getElementById("courseAdd");
         let newValue = [];
         for (let value of courseAdd.value.split("&&&")) {

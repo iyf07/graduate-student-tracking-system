@@ -36,7 +36,16 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/degree-audit', async (req, res) => {
-    res.render('degree-audit');
+    function newData(category, progress, taken, recommend){
+        data[category] = {'progress': progress, 'taken': taken, 'recommend': recommend};
+    }
+    const studentInfo = req.cookies;
+    const data = {};
+
+    // Algorithm here -- Example
+    newData('c', 'p', 't', 'r');
+
+    res.render('degree-audit', {data});
 })
 
 app.post('/degree-audit', async (req, res) => {

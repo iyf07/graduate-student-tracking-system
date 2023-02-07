@@ -94,7 +94,7 @@
                     <h5 class="card-title text-center">Selected Courses</h5>
                     <p class="card-text">Some text here.</p>
                     <ul class="mb-3 list-group list-group-flush" id="courseSection">
-                        <% if(cookies && cookies.course.length > 0){
+                        <% if(cookies && cookies.course && cookies.course.length > 0){
                                 for(let course of cookies.course.split('&&&').sort()){ %>
                             <li class="list-group-item" id="<%= course %>"><%= course %>
                                 <button class="btn btn-danger btn-sm right" type="button" onclick="remove(this)">

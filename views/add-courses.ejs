@@ -50,7 +50,9 @@
                             <select class="form10-select form-select" aria-label=".form-select example"
                                     id="specializationSelect" name="specialization"
                                     required>
-                                <option value="0">0</option>
+                                <% for (let specialization of specializations){ %>
+                                    <option value=<%= specialization[0] %> <%= cookies && cookies.specialization === String(specialization[0]) ? "selected" : {} %>><%= specialization[0] === 0 ? "None" : specialization[1] %></option>
+                                <% } %>
                             </select>
                         </div>
                         <div class="mb-4">

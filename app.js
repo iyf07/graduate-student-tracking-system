@@ -26,24 +26,33 @@ app.get('/', async (req, res) => {
     }
     const cookies = req.cookies;
     let courses = [];
+    let specializations = [];
     db.serialize(() => {
         db.each("SELECT subject, number, name from COURSE", (err, row) => {
             courses.push([row.subject, row.number, row.name])
         });
+        db.each("SELECT spec_id, spec_name from SPECIALIZATION", (err, row) => {
+            specializations.push([row.spec_id, row.spec_name])
+        });
     });
     await sleep(300);
-    res.render('add-courses', {courses, cookies});
+    res.render('add-courses', {courses, specializations, cookies});
 })
 
 app.get('/degree-audit', async (req, res) => {
     function newData(category, progress, taken, recommend){
-        data[category] = {'progress': progress, 'taken': taken, 'recommend': recommend};
+        if(progress.length > 0){
+            data[category]['progress'] = progress;
+        }
+        if(taken.length > 0){
+            data[category]['taken'] = taken;
+        }
+        if(recommend.length > 0){
+            data[category]['recommend'] = recommend;
+        }
     }
     const studentInfo = req.cookies;
     const data = {};
-
-    // Algorithm here -- Example
-    newData('c', 'p', 't', 'r');
 
     res.render('degree-audit', {data});
 })

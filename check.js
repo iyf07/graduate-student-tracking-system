@@ -1,18 +1,18 @@
 const sqlite3 = require("sqlite3").verbose();
 const database = "graduate_tracking_system.db";
 
-// open database
-let db = new sqlite3.Database(database, sqlite3.OPEN_READONLY, (err) => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log(`Connected to ${database}`);
-});
-
 var data = {};
-var total_bins_num = [2, 1, 1, 1, 2]; // [bin1_num, bin2_num, bin3_num, bin4_num, core_num]
+var total_bins_num = {
+  core: 2,
+  information: 2,
+  servicesAndOrganizations: 1,
+  technology: 1,
+  peopleAndCommunities: 1,
+  capstone: 2,
+  elective: 6,
+}; // [core_num, bin1_num, bin2_num, bin3_num, bin4_num, capstone_num,elective_num ]
 var taken_credit = 0;
-var capstone_step1 = false;
+var capstone_step1 = null;
 var capstone_step2 = null;
 const total_graduate_credit = 48;
 
@@ -23,41 +23,46 @@ function sleep(ms) {
 const initialize_data = function (program) {
   const category = [
     "core",
-    "bin1",
-    "bin2",
-    "bin3",
-    "bin4",
+    "information",
+    "servicesAndOrganizations",
+    "technology",
+    "peopleAndCommunities",
     "capstone",
     "elective",
   ];
+  if (program == "msis") {
+    total_bins_num.servicesAndOrganizations = 1;
+    total_bins_num.technology = 2;
+  } else if (program == "msls") {
+    total_bins_num.servicesAndOrganizations = 2;
+    total_bins_num.technology = 1;
+  }
   for (let i = 0; i < category.length; i++) {
     data[category[i]] = {
-      progress: { num: 0, credit: 0 },
+      progress: {
+        takenNum: 0,
+        requiredNum: total_bins_num[category[i]],
+        credit: 0,
+      },
       taken: new Array(),
       recommend: [],
     };
   }
-  if (program == "msis") {
-    total_bins_num[2] = 2;
-    total_bins_num[1] = 1;
-  } else if (program == "msls") {
-    total_bins_num[2] = 1;
-    total_bins_num[1] = 2;
-  }
-  capstone_step1 = false;
+  capstone_step1 = null;
   capstone_step2 = null;
 };
 
-const degree_audit = async function (program, capstone, courses) {
+const degree_audit = async function (program, capstone, courses, db) {
   initialize_data(program);
-  let taken_courses = await preprocess(courses);
+  console.log(capstone_step1, capstone_step2);
+  let taken_courses = await preprocess(courses, db);
   console.log(
     "student major and capstone:",
     program,
     " ",
     capstone,
     "\nbin 2 require:",
-    total_bins_num[1],
+    total_bins_num.servicesAndOrganizations,
     "\n",
     "now courses are:"
   );
@@ -73,17 +78,27 @@ const degree_audit = async function (program, capstone, courses) {
   for (let i = 0; i < taken_courses.length; i++) {
     let bin_id = taken_courses[i].bin_id;
     if (bin_id == 0) check_elective(taken_courses[i]);
-    else if (bin_id >= 1 && bin_id <= 4)
-      check_bin(taken_courses[i], "bin" + bin_id, total_bins_num[bin_id - 1]);
-    else if (bin_id == 5)
-      check_bin(taken_courses[i], "core", total_bins_num[bin_id - 1]);
+    else if (bin_id == 1) check_bin(taken_courses[i], "information");
+    else if (bin_id == 2)
+      check_bin(taken_courses[i], "servicesAndOrganizations");
+    else if (bin_id == 3) check_bin(taken_courses[i], "technology");
+    else if (bin_id == 4) check_bin(taken_courses[i], "peopleAndCommunities");
+    else if (bin_id == 5) check_bin(taken_courses[i], "core");
     else if (bin_id == 6) check_capstone(capstone, taken_courses[i]);
     else console.log("no bin_id:", bin_id);
+  }
+  //check_capstone
+  console.log(1111111, capstone_step1, capstone_step2);
+  if (capstone_step1 != null) {
+    update_data("capstone", capstone_step1);
+    if (capstone_step2 != null) update_data("capstone", capstone_step2);
+  } else if (capstone_step1 == null && capstone_step2 != null) {
+    console.log("cannot take 992 without taking 778/779!");
   }
   return data;
 };
 
-const preprocess = async function (courses) {
+const preprocess = async function (courses, db) {
   const courses_info = courses.split("&&&");
   let taken_courses = [];
   for (let i = 0; i < courses_info.length; i++) {
@@ -107,9 +122,12 @@ const preprocess = async function (courses) {
   return taken_courses;
 };
 
-const check_bin = function (course, bin_num, required_num) {
-  if (data[bin_num].progress.num + 1 <= required_num) {
-    update_data(bin_num, course);
+const check_bin = function (course, category) {
+  if (
+    data[category].progress.takenNum + 1 <=
+    data[category].progress.requiredNum
+  ) {
+    update_data(category, course);
   } else {
     check_elective(course);
   }
@@ -118,41 +136,26 @@ const check_bin = function (course, bin_num, required_num) {
 const check_capstone = function (capstone, course) {
   if (
     (capstone == "research" && course.number == "778") ||
-    (capstone == "practicum" && course.number == "779") ||
-    (capstone_step1 && course.number == "992") || //778/779 first, 992 second
-    (capstone_step1 && capstone_step2 != null) //992 first, 778/779 second
-  ) {
-    capstone_step1 = true;
-    update_data("capstone", course);
-    if (capstone_step1 && capstone_step2 != null) {
-      console.log("both take!!!!!!!!!!!!");
-      update_data("capstone", capstone_step2);
-    }
-  } else if (
-    (capstone == "research" && course.number == "779") ||
-    (capstone == "practicum" && course.number == "778")
-  ) {
-    check_elective(course);
-    console.log("move ", course.number, " in elective");
-    return;
-  } else if (course.number == "992" && !capstone_step1) {
-    //992 first, but 778/779 not met
-    capstone_step2 = course;
-    console.log("WARNING: cannot take 992 before taking 779 or 778");
-  }
+    (capstone == "practicum" && course.number == "779")
+  )
+    capstone_step1 = course;
+  else if (course.number == "992") capstone_step2 = course;
+  else check_elective(course);
 };
 
 const check_elective = function (course) {
   update_data("elective", course);
 };
 
-const update_data = function (bin, course) {
-  data[bin].progress.credit += course.credit;
-  data[bin].progress.num += 1;
+const update_data = function (category, course) {
+  data[category].progress.credit += course.credit;
+  data[category].progress.takenNum += 1;
   taken_credit += course.credit;
   delete course.credit;
   delete course.bin_id;
-  data[bin].taken.push(course);
+  data[category].taken.push(
+    course.subject + " " + course.number + " - " + course.name
+  );
 };
 
 module.exports = {
@@ -164,12 +167,12 @@ data={
   core: {
     progress:
     {
-      num: int,
-      credit:int
+      num: ,
+      credit:
     }, 
     taken:{
-      {subject: string, number: string, name: string},
-      {subject: string, number: string, name: string}
+      {subject: , number: , name: },
+      {subject: , number: , name: }
     },
     recommend:{
       //...
@@ -179,4 +182,5 @@ data={
     //...
   }
   //bin2 bin3 bin4 capstone elective..
-}*/
+}
+*/

@@ -55,7 +55,11 @@ for (let category of Object.keys(data)){
                                         <%= data['core']['taken'][i] %><br>
                                     <% } %>
                                 </td>
-                                <td></td>
+                                <td>
+                                    <% for (let i = 0; i < data['core']['recommend'].length; i++){ %>
+                                        <%= data['core']['recommend'][i] %><br>
+                                    <% } %>
+                                </td>
                                 <td><%= data['core']['progress']['credit'] %></td>
                             </tr>
                             <tr>
@@ -67,7 +71,11 @@ for (let category of Object.keys(data)){
                                         <%= data['information']['taken'][i] %><br>
                                     <% } %>
                                 </td>
-                                <td></td>
+                                <td>
+                                    <% for (let i = 0; i < data['information']['recommend'].length; i++){ %>
+                                        <%= data['information']['recommend'][i] %><br>
+                                    <% } %>
+                                </td>
                                 <td><%= data['information']['progress']['credit'] %></td>
                             </tr>
                             <tr>
@@ -79,7 +87,11 @@ for (let category of Object.keys(data)){
                                         <%= data['servicesAndOrganizations']['taken'][i] %><br>
                                     <% } %>
                                 </td>
-                                <td></td>
+                                <td>
+                                    <% for (let i = 0; i < data['servicesAndOrganizations']['recommend'].length; i++){ %>
+                                        <%= data['servicesAndOrganizations']['recommend'][i] %><br>
+                                    <% } %>
+                                </td>
                                 <td><%= data['servicesAndOrganizations']['progress']['credit'] %></td>
                             </tr>
                             <tr>
@@ -91,7 +103,11 @@ for (let category of Object.keys(data)){
                                         <%= data['technology']['taken'][i] %><br>
                                     <% } %>
                                 </td>
-                                <td></td>
+                                <td>
+                                    <% for (let i = 0; i < data['technology']['recommend'].length; i++){ %>
+                                        <%= data['technology']['recommend'][i] %><br>
+                                    <% } %>
+                                </td>
                                 <td><%= data['technology']['progress']['credit'] %></td>
                             </tr>
                             <tr>
@@ -103,7 +119,11 @@ for (let category of Object.keys(data)){
                                         <%= data['peopleAndCommunities']['taken'][i] %><br>
                                     <% } %>
                                 </td>
-                                <td></td>
+                                <td>
+                                    <% for (let i = 0; i < data['peopleAndCommunities']['recommend'].length; i++){ %>
+                                        <%= data['peopleAndCommunities']['recommend'][i] %><br>
+                                    <% } %>
+                                </td>
                                 <td><%= data['peopleAndCommunities']['progress']['credit'] %></td>
                             </tr>
                             <tr>
@@ -115,7 +135,11 @@ for (let category of Object.keys(data)){
                                         <%= data['capstone']['taken'][i] %><br>
                                     <% } %>
                                 </td>
-                                <td></td>
+                                <td>
+                                    <% for (let i = 0; i < data['capstone']['recommend'].length; i++){ %>
+                                        <%= data['capstone']['recommend'][i] %><br>
+                                    <% } %>
+                                </td>
                                 <td><%= data['capstone']['progress']['credit'] %></td>
                             </tr>
                             <tr>
@@ -127,7 +151,11 @@ for (let category of Object.keys(data)){
                                         <%= data['elective']['taken'][i] %><br>
                                     <% } %>
                                 </td>
-                                <td></td>
+                                <td>
+                                    <% for (let i = 0; i < data['elective']['recommend'].length; i++){ %>
+                                        <%= data['elective']['recommend'][i] %><br>
+                                    <% } %> 
+                                </td>
                                 <td><%= data['elective']['progress']['credit'] %></td>
                             </tr>
                             <tr>

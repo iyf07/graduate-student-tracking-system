@@ -6,7 +6,7 @@
     display :inline-block;
 }
 body {
-    background: #d5ecfc;;
+    background: #d5ecfc;
 }
 h3 {
     padding: 20px 30px;
@@ -26,13 +26,6 @@ h5 {
     border: 0;
     border-radius: 0.75rem;
 }
-
-/* #selectcourse {
-    background: transparent;
-} */
-
-
-/* CSS */
 .button-81 {
     background-color: #1e293b;
     color: rgb(245, 238, 238);
@@ -52,7 +45,6 @@ h5 {
     background-color: #fff;
     color: #1e293b;
 }
-
 
 .button-add {
     background-color: #FFFFFF;
@@ -92,3 +84,52 @@ h5 {
     border: 0;
     border-radius: .5rem;
 }
+
+.table-warning {
+    height: 50px;
+    background: #36304a;
+    --bs-table-bg:0;
+    color: #fff;
+    line-height: 1.2;
+    font-size: 18px;
+}
+
+
+.table-success {
+    --bs-table-bg:#e0ecf3;
+    text-align: center;
+    vertical-align:middle;
+}
+.table-primary {
+    border-color: transparent;
+    --bs-table-bg: #bfcbe1;
+    text-align: center;
+    vertical-align:middle;
+}
+.table-info {
+    border-color: transparent;
+    --bs-table-bg:#c6dce9;
+    text-align: center;
+    vertical-align:middle;
+}
+.table-secondary{
+    border-color: transparent;
+    --bs-table-bg:#e9edf7;
+    text-align: center;
+    vertical-align:middle;
+}
+.table-dark{
+    border-color: transparent;
+    --bs-table-bg:#b3cde1;
+    text-align: center;
+    vertical-align:middle;
+    --bs-table-color: rgb(1, 1, 1);
+    
+}
+.tb-center{
+    text-align: center;
+    vertical-align:middle;
+}
+/* .tb-total{
+
+} */

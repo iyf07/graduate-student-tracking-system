@@ -109,9 +109,6 @@ const degree_audit = async function (
   let spec_set = new Set();
   spec_dbToSet(spec_set, specialization, courses, db);
   await sleep(500);
-  //check_spec(spec_set, courses);
-  //update_data2(spec_set, db);
-
   return data;
 };
 
@@ -197,7 +194,7 @@ async function spec_dbToSet(spec_set, specialization, courses, db) {
     );
     //Core course
     db.each(
-      "SELECT subject, number, name from COURSE WHERE bin_id = 5",
+      "SELECT subject, number, name from COURSE WHERE bin_id = 5 OR bin_id = 6",
       (err, row) => {
         spec_set.add(row.subject + " " + row.number + " - " + row.name);
       }

@@ -51,8 +51,14 @@ const initialize_data = function (program) {
   capstone_step1 = null;
   capstone_step2 = null;
 };
-
-const degree_audit = async function (program, capstone, courses, db) {
+//var spec_set = new Set();
+const degree_audit = async function (
+  program,
+  capstone,
+  courses,
+  specialization,
+  db
+) {
   initialize_data(program);
   console.log(capstone_step1, capstone_step2);
   let taken_courses = await preprocess(courses, db);
@@ -61,8 +67,12 @@ const degree_audit = async function (program, capstone, courses, db) {
     program,
     " ",
     capstone,
-    "\nbin 2 require:",
+    "\n",
+    "bin 2 require:",
     total_bins_num.servicesAndOrganizations,
+    "\n",
+    "Specialization id:",
+    specialization,
     "\n",
     "now courses are:"
   );
@@ -95,6 +105,10 @@ const degree_audit = async function (program, capstone, courses, db) {
   } else if (capstone_step1 == null && capstone_step2 != null) {
     console.log("cannot take 992 without taking 778/779!");
   }
+  //recommand
+  let spec_set = new Set();
+  spec_dbToSet(spec_set, specialization, courses, db);
+  await sleep(500);
   return data;
 };
 
@@ -147,9 +161,12 @@ const check_elective = function (course) {
   update_data("elective", course);
 };
 
+//Update progress and taken
 const update_data = function (category, course) {
+  //update progress
   data[category].progress.credit += course.credit;
   data[category].progress.takenNum += 1;
+  //update taken
   taken_credit += course.credit;
   delete course.credit;
   delete course.bin_id;
@@ -162,6 +179,80 @@ module.exports = {
   degree_audit,
   taken_credit,
 };
+
+//Recommanded
+//Put the specialization and core courses to spec_set
+
+async function spec_dbToSet(spec_set, specialization, courses, db) {
+  db.serialize(() => {
+    //Specialization
+    db.each(
+      `SELECT subject, number, name from COURSE_TO_SPEC WHERE spec_id = ?`,
+      specialization,
+      (err, row) => {
+        spec_set.add(row.subject + " " + row.number + " - " + row.name);
+      }
+    );
+    //Core course
+    db.each(
+      "SELECT subject, number, name from COURSE WHERE bin_id = 5 OR bin_id = 6",
+      (err, row) => {
+        spec_set.add(row.subject + " " + row.number + " - " + row.name);
+      }
+    );
+  });
+
+  await sleep(300);
+  check_spec(spec_set, courses, db);
+}
+//Check whether the taken course is in specialization x
+
+function check_spec(spec_set, courses, db) {
+  const taken_courses2 = courses.split("&&&");
+  for (let i = 0; i < taken_courses2.length; i++) {
+    // Exist: remove it from set
+    if (spec_set.has(taken_courses2[i])) {
+      spec_set.delete(taken_courses2[i]);
+    }
+  }
+  update_data2(spec_set, db);
+}
+
+//Distribute the remaining course to each bin
+async function update_data2(spec_set, db) {
+  spec_set.forEach((e) => {
+    const course_info = e.split(" - ");
+    const subject_number = course_info[0].split(" ");
+    db.each(
+      `SELECT bin_id from COURSE WHERE subject=? AND number=? AND name=?`,
+      subject_number[0],
+      subject_number[1],
+      course_info[1],
+      (err, row) => {
+        if (row.bin_id == 0) {
+          data["elective"].recommend.push(e);
+        } else if (row.bin_id == 1) {
+          data["information"].recommend.push(e);
+        } else if (row.bin_id == 2) {
+          data["servicesAndOrganizations"].recommend.push(e);
+        } else if (row.bin_id == 3) {
+          data["technology"].recommend.push(e);
+        } else if (row.bin_id == 4) {
+          data["peopleAndCommunities"].recommend.push(e);
+        } else if (row.bin_id == 5) {
+          data["core"].recommend.push(e);
+        } else if (row.bin_id == 6) {
+          data["capstone"].recommend.push(e);
+        }
+      }
+    );
+  });
+  await sleep(300);
+
+  // console.log("=======in check.js=========");
+  // console.log(data);
+}
+
 /*
 data={
   core: {

@@ -59,8 +59,10 @@ app.get("/degree-audit", async (req, res) => {
     studentInfo.program,
     studentInfo.capstone,
     studentInfo.course,
+    studentInfo.specialization,
     db
   );
+  console.log("==========in app.js==========");
   console.log(data);
   // Algorithm here -- Example
   //newData("c", "p", "t", "r");

@@ -14,13 +14,9 @@
 <div class="container">
     <div class="row">
         <div class="mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title text-center">
+                    <h3 class="text-center">
                         Graduate Student Tracking System
                     </h3>
-                </div>
-            </div>
         </div>
     </div>
     <div class="row">
@@ -79,18 +75,18 @@
                                 </select>
                             </div>
                             <div class="col-2">
-                                <button type="button" onclick="addCourse()" class="btn btn-primary mb-3">Add</button>
+                                <button type="button" onclick="addCourse()" class="button-add">Add</button>
                             </div>
                         </div>
                         <div>
-                            <button class="btn btn-success mb-4">Generate Degree Audit</button>
-                            <button class="btn btn-success mb-4" onclick="changeAddress()">Save</button>
+                            <button class="button-81">Generate Degree Audit</button>
+                            <button class="button-81" onclick="changeAddress()">Save</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-        <div class="mb-4 col-sm-6">
+        <div class="mb-4 col-sm-6" id="selectcourse">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title text-center">Selected Courses</h5>
@@ -99,14 +95,14 @@
                         <% if(cookies && cookies.course && cookies.course.length > 0){
                                 for(let course of cookies.course.split('&&&').sort()){ %>
                             <li class="list-group-item" id="<%= course %>"><%= course %>
-                                <button class="btn btn-danger btn-sm right" type="button" onclick="remove(this)">
+                                <button class="btn-remove right" type="button" onclick="remove(this)">
                                     Remove
                                 </button>
                             </li>
                         <% }} %>
                     </ul>
                     <div>
-                        <button class="btn btn-danger mb-4" type="button" onclick="removeAll()">Remove All Courses
+                        <button class="btn-remove" type="button" onclick="removeAll()">Remove All Courses
                         </button>
                     </div>
                 </div>
@@ -142,7 +138,7 @@
         }
         courseNode.className = "list-group-item";
         courseNode.id = course.options[course.selectedIndex].text;
-        removeButton.className = "btn btn-danger btn-sm right";
+        removeButton.className = "btn-remove right";
         removeButton.addEventListener("click", function () {
             let newValue = [];
             for (let value of courseAdd.value.split('&&&')) {

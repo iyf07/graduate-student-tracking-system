@@ -14,9 +14,9 @@
 <div class="container">
     <div class="row">
         <div class="mb-3">
-                    <h3 class="text-center">
-                        Graduate Student Tracking System
-                    </h3>
+            <h3 class="text-center">
+                Graduate Student Tracking System
+            </h3>
         </div>
     </div>
     <div class="row">
@@ -26,7 +26,10 @@
                     <form action="/degree-audit" method="POST">
                         <input type="hidden" name="course" id="courseAdd" value="<%= cookies ? cookies.course : {} %>">
                         <input type="hidden" name="address" id="address">
-                        <h5 class="card-title text-center mb-4">Add Courses</h5>
+                        <h5 class="card-title text-center">Add Courses</h5>
+                        <div class="mb-4"><a href="https://sils.unc.edu/programs/graduate/msls/curriculum-spring2022"
+                                             class="card-text">Check out all courses here!</a>
+                        </div>
                         <p class="card-text mb-4">Some text here.</p>
                         <div class="mb-4">
                             <label for="programSelect" class="form-label">Program</label>
@@ -90,7 +93,7 @@
                                 <select class="form10-select form-select" aria-label=".form-select example"
                                         id="extraCourseBin">
                                     <% for (let bin of bins){ %>
-                                        <option value=<%= bin[0] %>><%= bin[1]%></option>
+                                        <option value=<%= bin[0] %>><%= bin[1] %></option>
                                     <% } %>
                                 </select>
                             </div>

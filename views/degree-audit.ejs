@@ -13,6 +13,7 @@
 <body>
 
 <% let total = 0;
+let graduate = true;
 for (let category of Object.keys(data)){
     total += data[category]['progress']['credit'];
 }%>
@@ -29,7 +30,9 @@ for (let category of Object.keys(data)){
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title text-center">Degree Audit</h5>
-                    <p class="card-text">Some text here.</p>
+                    <p class="card-text">Program: </p>
+                    <p class="card-text">Specialization: </p>
+                    <p class="card-text">Capstone: </p>
                     <div class="table-responsive">
                         <table class="table center">
                             <thead align="center">
@@ -42,7 +45,7 @@ for (let category of Object.keys(data)){
                             </tr>
                             </thead>
                             <tbody class="table-group-divider">
-                            <tr>
+                            <tr class="<%= data['information']['progress']['takenNum'] < data['information']['progress']['requiredNum'] ? 'warn': null%>">
                                 <th scope="row" class="table-success">Information</th>
                                 <td class="tb-center"><%= data['information']['progress']['takenNum'] %>
                                     /<%= data['information']['progress']['requiredNum'] %></td>
@@ -58,7 +61,7 @@ for (let category of Object.keys(data)){
                                 </td>
                                 <td class="tb-center"><%= data['information']['progress']['credit'] %></td>
                             </tr>
-                            <tr>
+                            <tr class="<%= data['servicesAndOrganizations']['progress']['takenNum'] < data['servicesAndOrganizations']['progress']['requiredNum'] ? 'warn' : null%>">
                                 <th scope="row" class="table-success">Services and Organizations</th>
                                 <td class="tb-center"><%= data['servicesAndOrganizations']['progress']['takenNum'] %>
                                     /<%= data['servicesAndOrganizations']['progress']['requiredNum'] %></td>
@@ -74,7 +77,7 @@ for (let category of Object.keys(data)){
                                 </td>
                                 <td class="tb-center"><%= data['servicesAndOrganizations']['progress']['credit'] %></td>
                             </tr>
-                            <tr>
+                            <tr class="<%= data['technology']['progress']['takenNum'] < data['technology']['progress']['requiredNum'] ? 'warn' : null%>">
                                 <th scope="row" class="table-success">Technology</th>
                                 <td class="tb-center"><%= data['technology']['progress']['takenNum'] %>
                                     /<%= data['technology']['progress']['requiredNum'] %></td>
@@ -90,7 +93,7 @@ for (let category of Object.keys(data)){
                                 </td>
                                 <td class="tb-center"><%= data['technology']['progress']['credit'] %></td>
                             </tr>
-                            <tr>
+                            <tr class="<%= data['peopleAndCommunities']['progress']['takenNum'] < data['peopleAndCommunities']['progress']['requiredNum'] ? 'warn' : null%>">
                                 <th scope="row" class="table-success">People and Communication</th>
                                 <td class="tb-center"><%= data['peopleAndCommunities']['progress']['takenNum'] %>
                                     /<%= data['peopleAndCommunities']['progress']['requiredNum'] %></td>
@@ -106,7 +109,7 @@ for (let category of Object.keys(data)){
                                 </td>
                                 <td class="tb-center"><%= data['peopleAndCommunities']['progress']['credit'] %></td>
                             </tr>
-                            <tr>
+                            <tr class="<%= data['core']['progress']['takenNum'] < data['core']['progress']['requiredNum'] ? 'warn' : null%>">
                                 <th scope="row" class="table-primary">Core</th>
                                 <td class="tb-center"><%= data['core']['progress']['takenNum'] %>
                                     /<%= data['core']['progress']['requiredNum'] %></td>
@@ -122,7 +125,7 @@ for (let category of Object.keys(data)){
                                 </td>
                                 <td class="tb-center"><%= data['core']['progress']['credit'] %></td>
                             </tr>
-                            <tr>
+                            <tr class="<%= data['capstone']['progress']['takenNum'] < data['capstone']['progress']['requiredNum'] ? 'warn' : null%>">
                                 <th scope="row" class="table-info">Capstone</th>
                                 <td class="tb-center"><%= data['capstone']['progress']['takenNum'] %>
                                     /<%= data['capstone']['progress']['requiredNum'] %></td>
@@ -138,7 +141,7 @@ for (let category of Object.keys(data)){
                                 </td>
                                 <td class="tb-center"><%= data['capstone']['progress']['credit'] %></td>
                             </tr>
-                            <tr>
+                            <tr class="<%= data['elective']['progress']['takenNum'] < data['elective']['progress']['requiredNum'] ? 'warn' : null%>">
                                 <th scope="row" class="table-secondary">Elective</th>
                                 <td class="tb-center"><%= data['elective']['progress']['takenNum'] %>
                                     /<%= data['elective']['progress']['requiredNum'] %></td>
@@ -156,7 +159,6 @@ for (let category of Object.keys(data)){
                             </tr>
                             <tr>
                                 <th scope="row" class="table-dark">Total Credits</th>
-                                <!-- <td colspan="3"></td> -->
                                 <td colspan="4" class="tb-center" style="font-weight:650"><%= total%>/48</td>
                             </tr>
                             </tbody>

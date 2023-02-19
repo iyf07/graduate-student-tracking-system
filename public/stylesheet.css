@@ -3,29 +3,35 @@
 }
 
 .center {
-    display :inline-block;
+    display: inline-block;
 }
+
 body {
     background: #d5ecfc;
 }
+
 h3 {
     padding: 20px 30px;
     font-size: 40px;
 }
+
 h5 {
     padding: 20px 20px;
     font-size: 25px;
     font-weight: 400;
     color: #13294B;
 }
+
 .container {
     padding: 33px 30px;
 }
-.card{
-    
+
+.card {
+
     border: 0;
     border-radius: 0.75rem;
 }
+
 .button-81 {
     background-color: #1e293b;
     color: rgb(245, 238, 238);
@@ -47,7 +53,7 @@ h5 {
 }
 
 .button-add {
-    background-color: #FFFFFF;
+    background-color: #aae7fa;
     border: 0;
     border-radius: .5rem;
     font-size: 1rem;
@@ -57,7 +63,7 @@ h5 {
 }
 
 .button-add:hover {
-    background-color: rgb(249,250,251);
+    background-color: rgb(249, 250, 251);
 }
 
 .button-add:focus {
@@ -68,8 +74,9 @@ h5 {
 .button-38:focus-visible {
     box-shadow: none;
 }
+
 .btn-remove {
-    background-color: #f2f2f2;
+    background-color: #b3babd;
     border: 0;
     border-radius: .5rem;
     font-size: 1rem;
@@ -77,9 +84,11 @@ h5 {
     text-align: center;
     cursor: pointer;
 }
+
 .btn-remove:hover {
     background-color: #dfdede;
 }
+
 .table-responsive {
     border: 0;
     border-radius: .5rem;
@@ -88,44 +97,53 @@ h5 {
 .table-warning {
     height: 50px;
     background: #36304a;
-    --bs-table-bg:0;
+    --bs-table-bg: 0;
     color: #fff;
     line-height: 1.2;
     font-size: 18px;
 }
 
 .table-success {
-    --bs-table-bg:#e0ecf3;
+    --bs-table-bg: #e0ecf3;
     text-align: center;
-    vertical-align:middle;
+    vertical-align: middle;
 }
+
 .table-primary {
     border-color: transparent;
     --bs-table-bg: #bfcbe1;
     text-align: center;
-    vertical-align:middle;
+    vertical-align: middle;
 }
+
 .table-info {
     border-color: transparent;
-    --bs-table-bg:#c6dce9;
+    --bs-table-bg: #c6dce9;
     text-align: center;
-    vertical-align:middle;
+    vertical-align: middle;
 }
-.table-secondary{
+
+.table-secondary {
     border-color: transparent;
-    --bs-table-bg:#e9edf7;
+    --bs-table-bg: #e9edf7;
     text-align: center;
-    vertical-align:middle;
+    vertical-align: middle;
 }
-.table-dark{
+
+.table-dark {
     border-color: transparent;
-    --bs-table-bg:#b3cde1;
+    --bs-table-bg: #b3cde1;
     text-align: center;
-    vertical-align:middle;
+    vertical-align: middle;
     --bs-table-color: rgb(1, 1, 1);
-    
+
 }
-.tb-center{
+
+.tb-center {
     text-align: center;
-    vertical-align:middle;
+    vertical-align: middle;
+}
+
+.warn {
+    background-color: red;
 }

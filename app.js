@@ -28,6 +28,7 @@ app.get("/", async (req, res) => {
   const cookies = req.cookies;
   let courses = [];
   let specializations = [];
+  let bins = [];
   db.serialize(() => {
     db.each("SELECT subject, number, name from COURSE", (err, row) => {
       courses.push([row.subject, row.number, row.name]);
@@ -35,9 +36,12 @@ app.get("/", async (req, res) => {
     db.each("SELECT spec_id, spec_name from SPECIALIZATION", (err, row) => {
       specializations.push([row.spec_id, row.spec_name]);
     });
+    db.each("SELECT bin_id, bin_name FROM BIN", (err, row) => {
+      bins.push([row.bin_id, row.bin_name]);
+    });
   });
   await sleep(300);
-  res.render("add-courses", { courses, specializations, cookies });
+  res.render("add-courses", { courses, specializations, bins, cookies });
 });
 
 app.get("/degree-audit", async (req, res) => {
@@ -54,7 +58,7 @@ app.get("/degree-audit", async (req, res) => {
   }
   const studentInfo = req.cookies;
   let data = {};
-
+console.log(studentInfo)
   data = await check.degree_audit(
     studentInfo.program,
     studentInfo.capstone,
@@ -62,10 +66,6 @@ app.get("/degree-audit", async (req, res) => {
     studentInfo.specialization,
     db
   );
-  console.log("==========in app.js==========");
-  console.log(data);
-  // Algorithm here -- Example
-  //newData("c", "p", "t", "r");
 
   res.render("degree-audit", { data });
 });

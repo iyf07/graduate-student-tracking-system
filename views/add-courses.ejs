@@ -89,12 +89,18 @@
                             <div class="col-2">
                                 <input type="text" class="form-control" placeholder="0000" id="extraCourseNumber">
                             </div>
-                            <div class="col-6">
+                            <div class="col-3">
                                 <select class="form10-select form-select" aria-label=".form-select example"
                                         id="extraCourseBin">
                                     <% for (let bin of bins){ %>
                                         <option value=<%= bin[0] %>><%= bin[1] %></option>
                                     <% } %>
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <select class="form10-select form-select" aria-label=".form-select example" id="extraCourseCredit">
+                                    <option value=1.5> 1.5 credits</option>
+                                    <option value=3> 3 credits</option>
                                 </select>
                             </div>
                             <div class="col-2">
@@ -186,9 +192,10 @@
         const courseSubject = document.getElementById("extraCourseSubject").value.toUpperCase();
         const courseNumber = document.getElementById("extraCourseNumber").value.toUpperCase();
         const courseBin = document.getElementById("extraCourseBin");
+        const courseCredit = document.getElementById("extraCourseCredit").value.toUpperCase();
         const courseName = courseSubject + " " + courseNumber;
-        const courseNameBin = courseName + " - (" + courseBin.options[courseBin.selectedIndex].text + ")";
-        const courseNodeText = document.createTextNode(courseNameBin.toUpperCase());
+        const courseNameBin = courseName + " - Bin: " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
+        const courseNodeText = document.createTextNode(courseNameBin);
         const courseAdd = document.getElementById("courseAdd");
         // Avoid adding duplicate courses
         for (let courseAdded of courseAdd.value.split("&&&")) {

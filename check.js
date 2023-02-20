@@ -12,15 +12,12 @@ var total_bins_num = {
   elective: 6,
 }; // [core_num, bin1_num, bin2_num, bin3_num, bin4_num, capstone_num,elective_num ]
 var taken_credit = 0;
-var capstone_step1 = null;
-var capstone_step2 = null;
-const total_graduate_credit = 48;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const initialize_data = function (program) {
+const initialize_data = function (specialization, program, capstone) {
   const category = [
     "core",
     "information",
@@ -48,8 +45,6 @@ const initialize_data = function (program) {
       recommend: [],
     };
   }
-  capstone_step1 = null;
-  capstone_step2 = null;
 };
 //var spec_set = new Set();
 const degree_audit = async function (
@@ -59,35 +54,11 @@ const degree_audit = async function (
   specialization,
   db
 ) {
-  initialize_data(program);
-  console.log(capstone_step1, capstone_step2);
+  initialize_data(specialization, program, capstone);
   let taken_courses = await preprocess(courses, db);
-  console.log(
-    "student major and capstone:",
-    program,
-    " ",
-    capstone,
-    "\n",
-    "bin 2 require:",
-    total_bins_num.servicesAndOrganizations,
-    "\n",
-    "Specialization id:",
-    specialization,
-    "\n",
-    "now courses are:"
-  );
-  for (let i = 0; i < taken_courses.length; i++) {
-    console.log(
-      taken_courses[i].subject + " " + taken_courses[i].number,
-      ": bin is ",
-      taken_courses[i].bin_id,
-      ", credit is ",
-      taken_courses[i].credit
-    );
-  }
   for (let i = 0; i < taken_courses.length; i++) {
     let bin_id = taken_courses[i].bin_id;
-    if (bin_id == 0) check_elective(taken_courses[i]);
+    if (bin_id == 0) update_data("elective", taken_courses[i]);
     else if (bin_id == 1) check_bin(taken_courses[i], "information");
     else if (bin_id == 2)
       check_bin(taken_courses[i], "servicesAndOrganizations");
@@ -96,14 +67,6 @@ const degree_audit = async function (
     else if (bin_id == 5) check_bin(taken_courses[i], "core");
     else if (bin_id == 6) check_capstone(capstone, taken_courses[i]);
     else console.log("no bin_id:", bin_id);
-  }
-  //check_capstone
-  console.log(1111111, capstone_step1, capstone_step2);
-  if (capstone_step1 != null) {
-    update_data("capstone", capstone_step1);
-    if (capstone_step2 != null) update_data("capstone", capstone_step2);
-  } else if (capstone_step1 == null && capstone_step2 != null) {
-    console.log("cannot take 992 without taking 778/779!");
   }
   //recommand
   let spec_set = new Set();
@@ -116,23 +79,46 @@ const preprocess = async function (courses, db) {
   const courses_info = courses.split("&&&");
   let taken_courses = [];
   for (let i = 0; i < courses_info.length; i++) {
-    const course_info = courses_info[i].split(" - ");
+    let course_info = courses_info[i].split(" - ");
     const subject_number = course_info[0].split(" ");
-    db.each(
-      `SELECT * from COURSE WHERE subject=? AND number=? AND name=?`,
-      subject_number[0],
-      subject_number[1],
-      course_info[1],
-      (err, row) => {
-        if (row.credit == "1.5") {
-          taken_courses.splice(0, 0, row);
-        } else {
-          taken_courses.push(row);
+    if (course_info.length == 3) {
+      db.each(
+        `SELECT * FROM BIN WHERE bin_name=?`,
+        course_info[1].substring(5),
+        (err, row) => {
+          const customizedCourse = {
+            subject: subject_number[0],
+            number: subject_number[1],
+            name: "Manual Added Course",
+            credit: Number(course_info[2].substring(8)),
+            bin_id: row.bin_id,
+          };
+          if (customizedCourse.credit == "1.5") {
+            taken_courses.splice(0, 0, customizedCourse);
+          } else {
+            taken_courses.push(customizedCourse);
+          }
         }
-      }
-    );
+      );
+      await sleep(300);
+    } else {
+      db.each(
+        `SELECT * from COURSE WHERE subject=? AND number=? AND name=?`,
+        subject_number[0],
+        subject_number[1],
+        course_info[1],
+        (err, row) => {
+          if (row.credit == "1.5") {
+            taken_courses.splice(0, 0, row);
+          } else {
+            taken_courses.push(row);
+          }
+        }
+      );
+      await sleep(300);
+    }
   }
-  await sleep(300);
+  console.log(taken_courses);
   return taken_courses;
 };
 
@@ -143,18 +129,18 @@ const check_bin = function (course, category) {
   ) {
     update_data(category, course);
   } else {
-    check_elective(course);
+    update_data("elective", course);
   }
 };
 
 const check_capstone = function (capstone, course) {
   if (
     (capstone == "research" && course.number == "778") ||
-    (capstone == "practicum" && course.number == "779")
+    (capstone == "practicum" && course.number == "779") ||
+    course.number == "992"
   )
-    capstone_step1 = course;
-  else if (course.number == "992") capstone_step2 = course;
-  else check_elective(course);
+    update_data("capstone", course);
+  else update_data("elective", course);
 };
 
 const check_elective = function (course) {

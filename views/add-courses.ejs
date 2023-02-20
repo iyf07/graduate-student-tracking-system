@@ -14,9 +14,9 @@
 <div class="container">
     <div class="row">
         <div class="mb-3">
-                    <h3 class="text-center">
-                        Graduate Student Tracking System
-                    </h3>
+            <h3 class="text-center">
+                Graduate Student Tracking System
+            </h3>
         </div>
     </div>
     <div class="row">
@@ -26,7 +26,10 @@
                     <form action="/degree-audit" method="POST">
                         <input type="hidden" name="course" id="courseAdd" value="<%= cookies ? cookies.course : {} %>">
                         <input type="hidden" name="address" id="address">
-                        <h5 class="card-title text-center mb-4">Add Courses</h5>
+                        <h5 class="card-title text-center">Add Courses</h5>
+                        <div class="mb-4"><a href="https://sils.unc.edu/programs/graduate/msls/curriculum-spring2022"
+                                             class="card-text">Check out all courses here!</a>
+                        </div>
                         <p class="card-text mb-4">Some text here.</p>
                         <div class="mb-4">
                             <label for="programSelect" class="form-label">Program</label>
@@ -76,6 +79,32 @@
                             </div>
                             <div class="col-2">
                                 <button type="button" onclick="addCourse()" class="button-add">Add</button>
+                            </div>
+                        </div>
+                        <label for="extraCourseSelect" class="form-label">Other Course</label>
+                        <div class="mb-4 row" id="extraCourseSelect">
+                            <div class="col-2">
+                                <input type="text" class="form-control" placeholder="INLS" id="extraCourseSubject">
+                            </div>
+                            <div class="col-2">
+                                <input type="text" class="form-control" placeholder="0000" id="extraCourseNumber">
+                            </div>
+                            <div class="col-3">
+                                <select class="form10-select form-select" aria-label=".form-select example"
+                                        id="extraCourseBin">
+                                    <% for (let bin of bins){ %>
+                                        <option value=<%= bin[0] %>><%= bin[1] %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <select class="form10-select form-select" aria-label=".form-select example" id="extraCourseCredit">
+                                    <option value=1.5> 1.5 credits</option>
+                                    <option value=3> 3 credits</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" onclick="addExtraCourse()" class="button-add">Add</button>
                             </div>
                         </div>
                         <div>
@@ -138,6 +167,52 @@
         }
         courseNode.className = "list-group-item";
         courseNode.id = course.options[course.selectedIndex].text;
+        removeButton.className = "btn-remove right";
+        removeButton.addEventListener("click", function () {
+            let newValue = [];
+            for (let value of courseAdd.value.split('&&&')) {
+                if (value !== removeButton.parentNode.id) {
+                    newValue.push(value);
+                }
+            }
+            courseAdd.value = newValue.join('&&&');
+            courseSection.removeChild(courseNode);
+        });
+        courseNode.append(courseNodeText);
+        removeButton.append(removeButtonText);
+        courseNode.append(removeButton);
+        courseSection.appendChild(courseNode);
+    }
+
+    function addExtraCourse() {
+        const removeButton = document.createElement("button");
+        const removeButtonText = document.createTextNode("Remove");
+        const courseSection = document.getElementById("courseSection");
+        const courseNode = document.createElement("li");
+        const courseSubject = document.getElementById("extraCourseSubject").value.toUpperCase();
+        const courseNumber = document.getElementById("extraCourseNumber").value.toUpperCase();
+        const courseBin = document.getElementById("extraCourseBin");
+        const courseCredit = document.getElementById("extraCourseCredit").value.toUpperCase();
+        const courseName = courseSubject + " " + courseNumber;
+        const courseNameBin = courseName + " - Bin: " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
+        const courseNodeText = document.createTextNode(courseNameBin);
+        const courseAdd = document.getElementById("courseAdd");
+        // Avoid adding duplicate courses
+        for (let courseAdded of courseAdd.value.split("&&&")) {
+            const courseAddedName = courseAdded.split(" - ")[0];
+            if (courseName === courseAddedName) {
+                alert("You have already added this course.");
+                return;
+            }
+        }
+
+        if (courseAdd.value.length !== 0) {
+            courseAdd.value += "&&&" + courseNameBin;
+        } else {
+            courseAdd.value = courseNameBin;
+        }
+        courseNode.className = "list-group-item";
+        courseNode.id = courseNameBin;
         removeButton.className = "btn-remove right";
         removeButton.addEventListener("click", function () {
             let newValue = [];

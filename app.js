@@ -21,10 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 app.use(cookieParser());
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 app.get("/", async (req, res) => {
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
   const cookies = req.cookies;
   let courses = [];
   let specializations = [];
@@ -58,7 +59,7 @@ app.get("/degree-audit", async (req, res) => {
   }
   const studentInfo = req.cookies;
   let data = {};
-console.log(studentInfo)
+
   data = await check.degree_audit(
     studentInfo.program,
     studentInfo.capstone,
@@ -67,7 +68,21 @@ console.log(studentInfo)
     db
   );
 
-  res.render("degree-audit", { data });
+  info = {
+    program: studentInfo.program,
+    capstone: studentInfo.capstone,
+    specialization: "N.A.",
+  };
+  db.each(
+    "SELECT spec_name FROM SPECIALIZATION WHERE spec_id=?",
+    studentInfo.specialization,
+    (err, row) => {
+      info.specialization = row.spec_name;
+    }
+  );
+  await sleep(300);
+
+  res.render("degree-audit", { data, info });
 });
 app.post("/degree-audit", async (req, res) => {
   res.cookie("course", req.body.course);

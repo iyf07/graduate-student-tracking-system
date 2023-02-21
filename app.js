@@ -31,18 +31,43 @@ app.get("/", async (req, res) => {
   let courses = [];
   let specializations = [];
   let bins = [];
-  db.serialize(() => {
-    db.each("SELECT subject, number, name from COURSE", (err, row) => {
-      courses.push([row.subject, row.number, row.name]);
-    });
-    db.each("SELECT spec_id, spec_name from SPECIALIZATION", (err, row) => {
-      specializations.push([row.spec_id, row.spec_name]);
-    });
-    db.each("SELECT bin_id, bin_name FROM BIN", (err, row) => {
-      bins.push([row.bin_id, row.bin_name]);
-    });
+  const coursePromise = new Promise((resolve, reject) => {
+    db.each(
+      "SELECT subject, number, name from COURSE",
+      (err, row) => {
+        courses.push([row.subject, row.number, row.name]);
+      },
+      () => {
+        resolve();
+      }
+    );
   });
-  await sleep(300);
+
+  const specializationPromise = new Promise((resolve, reject) => {
+    db.each(
+      "SELECT spec_id, spec_name from SPECIALIZATION",
+      (err, row) => {
+        specializations.push([row.spec_id, row.spec_name]);
+      },
+      () => {
+        resolve();
+      }
+    );
+  });
+
+  const binPromise = new Promise((resolve, reject) => {
+    db.each(
+      "SELECT bin_id, bin_name FROM BIN",
+      (err, row) => {
+        bins.push([row.bin_id, row.bin_name]);
+      },
+      () => {
+        resolve();
+      }
+    );
+  });
+
+  await Promise.all([coursePromise, specializationPromise, binPromise]);
   res.render("add-courses", { courses, specializations, bins, cookies });
 });
 

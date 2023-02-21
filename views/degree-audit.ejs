@@ -14,9 +14,14 @@
       integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
     <link rel="stylesheet" href="/stylesheet.css" />
   </head>
-  <body>
+  <body onload="checkStatus('<%=JSON.stringify(data)%>')">
     <% let total = 0; let graduate = true; for (let category of
     Object.keys(data)){ total += data[category]['progress']['credit']; }%>
     <div class="container">
@@ -30,21 +35,57 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title text-center">Degree Audit</h5>
-              <p class="card-text">Program: <%=info['program']%></p>
-              <p class="card-text">
-                Specialization: <%=info['specialization']%>
-              </p>
-              <p class="card-text">Capstone: <%=info['capstone']%></p>
+              <div class="info-card one-line">
+                <p class="card-title">Program:</p>
+                <p class="card-content"><%=info['program']%></p>
+              </div>
+              <div class="info-card one-line">
+                <p class="card-title">Specialization:</p>
+                <p class="card-content"><%=info['specialization']%></p>
+              </div>
+              <div class="info-card one-line">
+                <p class="card-title">Capstone:</p>
+                <p class="card-content"><%=info['capstone']%></p>
+              </div>
+              <div class="one-line">
+                <button
+                  type="button"
+                  class="button-back"
+                  onclick="window.history.back()"
+                >
+                  Back to Add Courses
+                </button>
+                <button class="button-print" onclick="window.print()">
+                  Print This Page
+                </button>
+              </div>
+              <div class="popup-container" id="myPopup">
+                <div class="popuptext">
+                  <i class="check">&#x2611;</i> Completed
+                  <i class="warning1">&#9888;</i> In Progress
+                  <i class="warning2">&#x2612;</i> Not Started
+                  <span class="popuptext-arrow"></span>
+                </div>
+              </div>
               <div class="table-responsive">
                 <table class="table center">
                   <thead align="center">
                     <tr class="table-warning">
-                      <th scope="col">Category</th>
-                      <th scope="col">Progress</th>
-                      <th scope="col">Taken</th>
-                      <th scope="col">Recommended</th>
-                      <th scope="col">Credits</th>
-                      <th scope="col">Status</th>
+                      <th scope="col" class="tb-center">Category</th>
+                      <th scope="col" class="tb-center">Progress</th>
+                      <th scope="col" class="tb-center">Taken</th>
+                      <th scope="col" class="tb-center">Recommended</th>
+                      <th scope="col" class="tb-center">Credits</th>
+                      <th scope="col" class="tb-center">
+                        <span class="one-line"
+                          >Status<i
+                            class="fa fa-question-circle"
+                            onmouseover="showPop()"
+                            ,
+                            onmouseleave="hidePop()"
+                          ></i>
+                        </span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody class="table-group-divider">
@@ -71,16 +112,7 @@
                       <td class="tb-center">
                         <%= data['information']['progress']['credit'] %>
                       </td>
-                      <td class="tb-center">
-                        <% if (data['information']['progress']['takenNum'] >=
-                        data['information']['progress']['requiredNum']) { %>
-                        <span class="symbol check">&#x2611;</span> <% } else if
-                        (data['information']['progress']['takenNum'] ==0) { %>
-                        <span class="symbol warning2">&#x2612;</span> <% } else
-                        if (data['information']['progress']['takenNum'] <
-                        data['information']['progress']['requiredNum']){ %>
-                        <span class="symbol warning1">&#9888;</span> <% } %>
-                      </td>
+                      <td id="information-status"></td>
                     </tr>
                     <tr
                       class="<%= data['servicesAndOrganizations']['progress']['takenNum'] < data['servicesAndOrganizations']['progress']['requiredNum'] ? 'warn' : null%>"
@@ -114,22 +146,7 @@
                         data['servicesAndOrganizations']['progress']['credit']
                         %>
                       </td>
-                      <td class="tb-center">
-                        <% if
-                        (data['servicesAndOrganizations']['progress']['takenNum']
-                        >=
-                        data['servicesAndOrganizations']['progress']['requiredNum'])
-                        { %>
-                        <span class="symbol check">&#x2611;</span> <% } else if
-                        (data['servicesAndOrganizations']['progress']['takenNum']
-                        ==0) { %>
-                        <span class="symbol warning2">&#x2612;</span> <% } else
-                        if
-                        (data['servicesAndOrganizations']['progress']['takenNum']
-                        <
-                        data['servicesAndOrganizations']['progress']['requiredNum']){
-                        %> <span class="symbol warning1">&#9888;</span> <% } %>
-                      </td>
+                      <td id="servicesAndOrganizations-status"></td>
                     </tr>
                     <tr
                       class="<%= data['technology']['progress']['takenNum'] < data['technology']['progress']['requiredNum'] ? 'warn' : null%>"
@@ -154,16 +171,7 @@
                       <td class="tb-center">
                         <%= data['technology']['progress']['credit'] %>
                       </td>
-                      <td class="tb-center">
-                        <% if (data['technology']['progress']['takenNum'] >=
-                        data['technology']['progress']['requiredNum']) { %>
-                        <span class="symbol check">&#x2611;</span> <% } else if
-                        (data['technology']['progress']['takenNum'] ==0) { %>
-                        <span class="symbol warning2">&#x2612;</span> <% } else
-                        if (data['technology']['progress']['takenNum'] <
-                        data['technology']['progress']['requiredNum']){ %>
-                        <span class="symbol warning1">&#9888;</span> <% } %>
-                      </td>
+                      <td id="technology-status"></td>
                     </tr>
                     <tr
                       class="<%= data['peopleAndCommunities']['progress']['takenNum'] < data['peopleAndCommunities']['progress']['requiredNum'] ? 'warn' : null%>"
@@ -194,20 +202,7 @@
                         <%= data['peopleAndCommunities']['progress']['credit']
                         %>
                       </td>
-                      <td class="tb-center">
-                        <% if
-                        (data['peopleAndCommunities']['progress']['takenNum'] >=
-                        data['peopleAndCommunities']['progress']['requiredNum'])
-                        { %>
-                        <span class="symbol check">&#x2611;</span> <% } else if
-                        (data['peopleAndCommunities']['progress']['takenNum']
-                        ==0) { %>
-                        <span class="symbol warning2">&#x2612;</span> <% } else
-                        if (data['peopleAndCommunities']['progress']['takenNum']
-                        <
-                        data['peopleAndCommunities']['progress']['requiredNum']){
-                        %> <span class="symbol warning1">&#9888;</span> <% } %>
-                      </td>
+                      <td id="peopleAndCommunities-status"></td>
                     </tr>
                     <tr
                       class="<%= data['core']['progress']['takenNum'] < data['core']['progress']['requiredNum'] ? 'warn' : null%>"
@@ -230,16 +225,7 @@
                       <td class="tb-center">
                         <%= data['core']['progress']['credit'] %>
                       </td>
-                      <td class="tb-center">
-                        <% if (data['core']['progress']['takenNum'] >=
-                        data['core']['progress']['requiredNum']) { %>
-                        <span class="symbol check">&#x2611;</span> <% } else if
-                        (data['core']['progress']['takenNum'] ==0) { %>
-                        <span class="symbol warning2">&#x2612;</span> <% } else
-                        if (data['core']['progress']['takenNum'] <
-                        data['core']['progress']['requiredNum']){ %>
-                        <span class="symbol warning1">&#9888;</span> <% } %>
-                      </td>
+                      <td id="core-status"></td>
                     </tr>
                     <tr
                       class="<%= data['capstone']['progress']['takenNum'] < data['capstone']['progress']['requiredNum'] ? 'warn' : null%>"
@@ -263,16 +249,7 @@
                       <td class="tb-center">
                         <%= data['capstone']['progress']['credit'] %>
                       </td>
-                      <td class="tb-center">
-                        <% if (data['capstone']['progress']['takenNum'] >=
-                        data['capstone']['progress']['requiredNum']) { %>
-                        <span class="symbol check">&#x2611;</span> <% } else if
-                        (data['capstone']['progress']['takenNum'] ==0) { %>
-                        <span class="symbol warning2">&#x2612;</span> <% } else
-                        if (data['capstone']['progress']['takenNum'] <
-                        data['capstone']['progress']['requiredNum']){ %>
-                        <span class="symbol warning1">&#9888;</span> <% } %>
-                      </td>
+                      <td id="capstone-status"></td>
                     </tr>
                     <tr
                       class="<%= data['elective']['progress']['takenNum'] < data['elective']['progress']['requiredNum'] ? 'warn' : null%>"
@@ -296,16 +273,7 @@
                       <td class="tb-center">
                         <%= data['elective']['progress']['credit'] %>
                       </td>
-                      <td class="tb-center">
-                        <% if (data['elective']['progress']['takenNum'] >=
-                        data['elective']['progress']['requiredNum']) { %>
-                        <span class="symbol check">&#x2611;</span> <% } else if
-                        (data['elective']['progress']['takenNum'] ==0) { %>
-                        <span class="symbol warning2">&#x2612;</span> <% } else
-                        if (data['elective']['progress']['takenNum'] <
-                        data['elective']['progress']['requiredNum']){ %>
-                        <span class="symbol warning1">&#9888;</span> <% } %>
-                      </td>
+                      <td id="elective-status"></td>
                     </tr>
                     <tr>
                       <th scope="row" class="table-dark">Total Credits</th>
@@ -327,3 +295,38 @@
     </div>
   </body>
 </html>
+
+<script>
+  function showPop() {
+    var popup = document.getElementById("myPopup");
+    popup.style.display = "block";
+  }
+  function hidePop() {
+    var popup = document.getElementById("myPopup");
+    popup.style.display = "none";
+  }
+  function checkStatus(data) {
+    const parsedData = JSON.parse(data);
+    const keys = Object.keys(parsedData);
+    const ids = keys.map((element) => element + "-status");
+    for (let i = 0; i < keys.length; i++) {
+      const elective = document.getElementById(ids[i]);
+      if (
+        parsedData[keys[i]]["progress"]["takenNum"] >=
+        parsedData[keys[i]]["progress"]["requiredNum"]
+      ) {
+        elective.innerHTML = "&#x2611;";
+        elective.className = "check tb-center";
+      } else if (parsedData[keys[i]]["progress"]["takenNum"] == 0) {
+        elective.innerHTML = "&#x2612;";
+        elective.className = "warning2 tb-center";
+      } else if (
+        parsedData[keys[i]]["progress"]["takenNum"] <
+        parsedData[keys[i]]["progress"]["requiredNum"]
+      ) {
+        elective.innerHTML = "&#9888;";
+        elective.className = "warning1 tb-center";
+      }
+    }
+  }
+</script>

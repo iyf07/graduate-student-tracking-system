@@ -9,7 +9,7 @@
 - [ ] Add doctoral degree
 - [ ] Change `Not belonging to any bin` to `Elective`
 ### Backend
-- [ ] Return student information to frontend
+- [x] Return student information to frontend
 - [ ] Recommend capstone courses based on capstone track
 ### Frontend
 - [ ] Add print the page feature

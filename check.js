@@ -27,10 +27,10 @@ const initialize_data = function (specialization, program, capstone) {
     "capstone",
     "elective",
   ];
-  if (program == "msis") {
+  if (program == "MSIS") {
     total_bins_num.servicesAndOrganizations = 1;
     total_bins_num.technology = 2;
-  } else if (program == "msls") {
+  } else if (program == "MSLS") {
     total_bins_num.servicesAndOrganizations = 2;
     total_bins_num.technology = 1;
   }
@@ -100,7 +100,7 @@ const preprocess = async function (courses, db) {
           }
         }
       );
-      await sleep(300);
+      await sleep(100);
     } else {
       db.each(
         `SELECT * from COURSE WHERE subject=? AND number=? AND name=?`,
@@ -118,7 +118,6 @@ const preprocess = async function (courses, db) {
       await sleep(300);
     }
   }
-  console.log(taken_courses);
   return taken_courses;
 };
 
@@ -163,7 +162,6 @@ const update_data = function (category, course) {
 
 module.exports = {
   degree_audit,
-  taken_credit,
 };
 
 //Recommanded

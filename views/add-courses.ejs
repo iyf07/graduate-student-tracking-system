@@ -36,10 +36,10 @@
                             <select class="form10-select form-select" aria-label=".form-select example"
                                     id="programSelect" name="program"
                                     required>
-                                <option value="msls" <%= cookies && cookies.program === "msls" ? "selected" : {} %>>MSLS
+                                <option value="MSLS" <%= cookies && cookies.program === "MSLS" ? "selected" : {} %>>MSLS
                                     - Master of Science in Library Science
                                 </option>
-                                <option value="msis" <%= cookies && cookies.program === "msis" ? "selected" : {} %>>MSIS
+                                <option value="MSIS" <%= cookies && cookies.program === "MSIS" ? "selected" : {} %>>MSIS
                                     - Master of Science in Information Science
                                 </option>
                             </select>
@@ -67,18 +67,20 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="mb-4 row">
+                        <div class="mb-4">
                             <label for="courseSelect" class="form-label">Course</label>
-                            <div class="col-10">
-                                <select class="form10-select form-select" aria-label=".form-select example"
-                                        id="courseSelect" required>
-                                    <% for (let course of courses){ %>
-                                        <option value=<%= 0 %>><%= `${course[0]} ${course[1]} - ${course[2]}` %></option>
-                                    <% } %>
-                                </select>
-                            </div>
-                            <div class="col-2">
-                                <button type="button" onclick="addCourse()" class="button-add">Add</button>
+                            <div class="row">
+                                <div class="col-10">
+                                    <select class="form10-select form-select" aria-label=".form-select example"
+                                            id="courseSelect" required>
+                                        <% for (let course of courses){ %>
+                                            <option value=<%= 0 %>><%= `${course[0]} ${course[1]} - ${course[2]}` %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" onclick="addCourse()" class="button-add">Add</button>
+                                </div>
                             </div>
                         </div>
                         <label for="extraCourseSelect" class="form-label">Other Course</label>

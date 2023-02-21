@@ -10,7 +10,7 @@
 - [x] Change `Not belonging to any bin` to `Elective`
 ### Backend
 - [x] Return student information to frontend
-- [ ] Recommend capstone courses based on capstone track
+- [x] Recommend capstone courses based on capstone track
 ### Frontend
 - [ ] Precheck 992 exists without 779/778
 - [X] Add print the page feature

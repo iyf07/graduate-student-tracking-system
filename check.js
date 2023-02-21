@@ -46,7 +46,6 @@ const initialize_data = function (program) {
     };
   }
 };
-//var spec_set = new Set();
 const degree_audit = async function (
   program,
   capstone,
@@ -54,30 +53,35 @@ const degree_audit = async function (
   specialization,
   db
 ) {
+  let specSet = new Set();
+
+  spec_dbToSet(specSet, specialization, capstone, db);
+  await new Promise((resolve) => setTimeout(resolve, 300));
   initialize_data(program);
-  let taken_courses = await preprocess(courses, db);
-  for (let i = 0; i < taken_courses.length; i++) {
-    let bin_id = taken_courses[i].bin_id;
-    if (bin_id == 0) update_data("elective", taken_courses[i]);
-    else if (bin_id == 1) check_bin(taken_courses[i], "information");
-    else if (bin_id == 2)
-      check_bin(taken_courses[i], "servicesAndOrganizations");
-    else if (bin_id == 3) check_bin(taken_courses[i], "technology");
-    else if (bin_id == 4) check_bin(taken_courses[i], "peopleAndCommunities");
-    else if (bin_id == 5) check_bin(taken_courses[i], "core");
-    else if (bin_id == 6) check_capstone(capstone, taken_courses[i]);
+  let taken = await preprocess(courses, db, specSet);
+  const recommandCourses = taken[1]; //in set
+  const progressTaken = taken[0];
+  recommandCourses.forEach((course) => {
+    updateRecommandData(course);
+  });
+  progressTaken.forEach((course) => {
+    let bin_id = course.bin_id;
+    if (bin_id == 0) update_data("elective", course);
+    else if (bin_id == 1) check_bin(course, "information");
+    else if (bin_id == 2) check_bin(course, "servicesAndOrganizations");
+    else if (bin_id == 3) check_bin(course, "technology");
+    else if (bin_id == 4) check_bin(course, "peopleAndCommunities");
+    else if (bin_id == 5) check_bin(course, "core");
+    else if (bin_id == 6) check_capstone(capstone, course);
     else console.log("no bin_id:", bin_id);
-  }
-  //recommand
-  let spec_set = new Set();
-  spec_dbToSet(spec_set, specialization, courses, db);
-  await sleep(500);
+  });
   return data;
 };
 
-const preprocess = async function (courses, db) {
+const preprocess = async function (courses, db, recommandSet) {
   const courses_info = courses.split("&&&");
-  let taken_courses = [];
+  let takenCheckForProgress = [];
+  let takenCheckForRecommand = "";
   for (let i = 0; i < courses_info.length; i++) {
     let course_info = courses_info[i].split(" - ");
     const subject_number = course_info[0].split(" ");
@@ -89,29 +93,55 @@ const preprocess = async function (courses, db) {
         credit: Number(course_info[2].substring(8)),
         bin_id: Number(course_info[1].substring(4, 5)),
       };
+      takenCheckForRecommand =
+        customizedCourse.subject +
+        " " +
+        customizedCourse.number +
+        " - " +
+        customizedCourse.name +
+        " & " +
+        customizedCourse.bin_id;
+      //Check whether the taken course is in specialization x
+      if (recommandSet.has(takenCheckForRecommand)) {
+        recommandSet.delete(takenCheckForRecommand);
+      }
       if (customizedCourse.credit == "1.5") {
-        taken_courses.splice(0, 0, customizedCourse);
+        takenCheckForProgress.splice(0, 0, customizedCourse);
       } else {
-        taken_courses.push(customizedCourse);
+        takenCheckForProgress.push(customizedCourse);
       }
     } else {
-      db.each(
-        `SELECT * from COURSE WHERE subject=? AND number=? AND name=?`,
-        subject_number[0],
-        subject_number[1],
-        course_info[1],
-        (err, row) => {
-          if (row.credit == "1.5") {
-            taken_courses.splice(0, 0, row);
-          } else {
-            taken_courses.push(row);
-          }
-        }
-      );
-      await sleep(300);
+      const coursePromise = new Promise((resolve) => {
+        db.each(
+          `SELECT * from COURSE WHERE subject=? AND number=? AND name=?`,
+          subject_number[0],
+          subject_number[1],
+          course_info[1],
+          (err, row) => {
+            takenCheckForRecommand =
+              row.subject +
+              " " +
+              row.number +
+              " - " +
+              row.name +
+              " & " +
+              row.bin_id;
+            if (recommandSet.has(takenCheckForRecommand)) {
+              recommandSet.delete(takenCheckForRecommand);
+            }
+            if (row.credit == "1.5") {
+              takenCheckForProgress.splice(0, 0, row);
+            } else {
+              takenCheckForProgress.push(row);
+            }
+          },
+          () => resolve()
+        );
+      });
+      await coursePromise;
     }
   }
-  return taken_courses;
+  return [takenCheckForProgress, recommandSet];
 };
 
 const check_bin = function (course, category) {
@@ -156,95 +186,74 @@ module.exports = {
 //Recommanded
 //Put the specialization and core courses to spec_set
 
-async function spec_dbToSet(spec_set, specialization, courses, db) {
-  db.serialize(() => {
-    //Specialization
-    db.each(
-      `SELECT subject, number, name from COURSE_TO_SPEC WHERE spec_id = ?`,
-      specialization,
-      (err, row) => {
-        spec_set.add(row.subject + " " + row.number + " - " + row.name);
-      }
-    );
-    //Core course
-    db.each(
-      "SELECT subject, number, name from COURSE WHERE bin_id = 5 OR bin_id = 6",
-      (err, row) => {
-        spec_set.add(row.subject + " " + row.number + " - " + row.name);
-      }
-    );
+async function spec_dbToSet(specSet, specialization, capstone, db) {
+  return new Promise((resolve) => {
+    db.serialize(() => {
+      //Specialization
+      db.each(
+        `SELECT COURSE_TO_SPEC.subject, COURSE_TO_SPEC.number, COURSE_TO_SPEC.name, bin_id 
+      FROM COURSE_TO_SPEC 
+      INNER JOIN COURSE 
+      ON COURSE.subject=COURSE_TO_SPEC.subject AND COURSE.number=COURSE_TO_SPEC.number AND COURSE.name=COURSE_TO_SPEC.name 
+      WHERE spec_id=?`,
+        specialization,
+        (err, row) => {
+          specSet.add(
+            row.subject +
+              " " +
+              row.number +
+              " - " +
+              row.name +
+              " & " +
+              row.bin_id
+          );
+        }
+      );
+      //Core & Capstone courses
+      db.each(
+        "SELECT subject, number, name, bin_id from COURSE WHERE bin_id = 5 OR bin_id = 6",
+        (err, row) => {
+          if (
+            (capstone == "research" && row.number != "779") ||
+            (capstone == "practicum" && row.number != "778")
+          ) {
+            specSet.add(
+              row.subject +
+                " " +
+                row.number +
+                " - " +
+                row.name +
+                " & " +
+                row.bin_id
+            );
+          }
+        }
+      );
+    });
+    setTimeout(() => {
+      resolve();
+    }, 200);
   });
-
-  await sleep(300);
-  check_spec(spec_set, courses, db);
-}
-//Check whether the taken course is in specialization x
-
-function check_spec(spec_set, courses, db) {
-  const taken_courses2 = courses.split("&&&");
-  for (let i = 0; i < taken_courses2.length; i++) {
-    // Exist: remove it from set
-    if (spec_set.has(taken_courses2[i])) {
-      spec_set.delete(taken_courses2[i]);
-    }
-  }
-  update_data2(spec_set, db);
 }
 
 //Distribute the remaining course to each bin
-async function update_data2(spec_set, db) {
-  spec_set.forEach((e) => {
-    const course_info = e.split(" - ");
-    const subject_number = course_info[0].split(" ");
-    db.each(
-      `SELECT bin_id from COURSE WHERE subject=? AND number=? AND name=?`,
-      subject_number[0],
-      subject_number[1],
-      course_info[1],
-      (err, row) => {
-        if (row.bin_id == 0) {
-          data["elective"].recommend.push(e);
-        } else if (row.bin_id == 1) {
-          data["information"].recommend.push(e);
-        } else if (row.bin_id == 2) {
-          data["servicesAndOrganizations"].recommend.push(e);
-        } else if (row.bin_id == 3) {
-          data["technology"].recommend.push(e);
-        } else if (row.bin_id == 4) {
-          data["peopleAndCommunities"].recommend.push(e);
-        } else if (row.bin_id == 5) {
-          data["core"].recommend.push(e);
-        } else if (row.bin_id == 6) {
-          data["capstone"].recommend.push(e);
-        }
-      }
-    );
-  });
-  await sleep(300);
-
-  // console.log("=======in check.js=========");
-  // console.log(data);
-}
-
-/*
-data={
-  core: {
-    progress:
-    {
-      num: ,
-      credit:
-    }, 
-    taken:{
-      {subject: , number: , name: },
-      {subject: , number: , name: }
-    },
-    recommend:{
-      //...
-    }
-  },
-  bin1:{
-    //...
+async function updateRecommandData(course) {
+  const recommandCourse = course.split(" & ");
+  const courseInfo = recommandCourse[0];
+  const bin_id = recommandCourse[1];
+  if (bin_id == 0) {
+    data["elective"].recommend.push(courseInfo);
+  } else if (bin_id == 1) {
+    data["information"].recommend.push(courseInfo);
+  } else if (bin_id == 2) {
+    data["servicesAndOrganizations"].recommend.push(courseInfo);
+  } else if (bin_id == 3) {
+    data["technology"].recommend.push(courseInfo);
+  } else if (bin_id == 4) {
+    data["peopleAndCommunities"].recommend.push(courseInfo);
+  } else if (bin_id == 5) {
+    data["core"].recommend.push(courseInfo);
+  } else if (bin_id == 6) {
+    data["capstone"].recommend.push(courseInfo);
   }
-  //bin2 bin3 bin4 capstone elective..
 }
-*/

@@ -12,23 +12,27 @@ body {
 
 h3 {
   padding: 20px 30px;
-  font-size: 40px;
+  font-size: 30px;
 }
 
 h5 {
   padding: 20px 20px;
-  font-size: 25px;
-  font-weight: 400;
+  font-size: 23px;
+  font-weight: 500;
   color: #13294b;
 }
 
 .container {
-  padding: 33px 30px;
+  padding: 10px 30px;
 }
 
 .card {
   border: 0;
   border-radius: 0.75rem;
+}
+
+.text-center {
+  padding: 0px;
 }
 
 .button-81 {
@@ -47,7 +51,7 @@ h5 {
 }
 
 .button-81:hover {
-  background-color: #fff;
+  background-color: #6592d9;
   color: #1e293b;
 }
 
@@ -62,7 +66,7 @@ h5 {
 }
 
 .button-add:hover {
-  background-color: rgb(249, 250, 251);
+  background-color: #52cff6;
 }
 
 .button-add:focus {
@@ -142,18 +146,111 @@ h5 {
   vertical-align: middle;
 }
 
-.symbol {
-  font-size: 1.4rem;
+.info-card {
+  margin: 5px 15px;
+}
+
+.card-title {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
+.card-content {
+  padding-left: 10px;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.button-back {
+  background-color: #aae7fa;
+  border: 0;
+  border-radius: 0.5rem;
+  margin: 10px 10px;
+  font-size: 1rem;
+  padding: 0.4rem 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.button-back:hover {
+  background-color: #52cff6;
+}
+
+.button-print {
+  background-color: #e5f5a6;
+  border: 0;
+  border-radius: 0.5rem;
+  margin: 10px 10px;
+  font-size: 1rem;
+  padding: 0.4rem 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.button-print:hover {
+  background-color: #dfee58;
 }
 
 .warning1 {
   color: #f4ae17;
+  font-size: 18pt;
 }
 
 .warning2 {
   color: red;
+  font-size: 18pt;
 }
 
 .check {
   color: green;
+  font-size: 18pt;
+}
+
+.fa-question-circle {
+  font-size: 18px;
+  color: #fefed4;
+  padding-top: 3px;
+  padding-left: 5px;
+  cursor: pointer;
+}
+
+.one-line {
+  display: flex;
+}
+
+.popup-container {
+  display: none;
+  position: absolute;
+  z-index: 999;
+  right: 10%;
+  top: 70px;
+  opacity: 0.7;
+}
+
+.popuptext {
+  width: 150px;
+  background-color: #eef4f4;
+  color: black;
+  text-align: left;
+  font-size: 1 rem;
+  font-weight: normal;
+  border-radius: 6px;
+  padding: 10px 10px 10px 10px;
+  position: absolute;
+}
+
+.popup-container:hover .popuptext {
+  visibility: visible;
+}
+
+.popuptext-arrow {
+  position: absolute;
+  top: 98%;
+  left: 15%;
+  margin-left: -10px;
+  transform: rotate(180deg);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 12px solid #eef4f4;
 }

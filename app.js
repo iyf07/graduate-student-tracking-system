@@ -82,7 +82,6 @@ app.get("/degree-audit", async (req, res) => {
     }
   );
   await sleep(300);
-
   res.render("degree-audit", { data, info });
 });
 app.post("/degree-audit", async (req, res) => {

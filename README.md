@@ -2,12 +2,12 @@
 ## Issues
 ### General
 - [ ] Update README and create manual
-- [ ] Deployment
+- [x] Deployment
 ### Database
-- [ ] Remove below-400 courses
-- [ ] Delete INLS 882
+- [x] Remove below-400 courses
+- [x] Delete INLS 882
 - [ ] Add doctoral degree
-- [ ] Change `Not belonging to any bin` to `Elective`
+- [x] Change `Not belonging to any bin` to `Elective`
 ### Backend
 - [ ] Return student information to frontend
 - [ ] Recommend capstone courses based on capstone track

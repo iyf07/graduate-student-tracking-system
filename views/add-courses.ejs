@@ -50,7 +50,7 @@
                                     id="specializationSelect" name="specialization"
                                     required>
                                 <% for (let specialization of specializations){ %>
-                                    <option value=<%= specialization[0] %> <%= cookies && cookies.specialization === String(specialization[0]) ? "selected" : {} %>><%= specialization[0] === 0 ? "None" : specialization[1] %></option>
+                                    <option value="<%= specialization[0]+ ' - ' +specialization[1] %>" <%= cookies && cookies.specialization === String(specialization[0]) ? "selected" : {} %>><%= specialization[0] === 0 ? "None" : specialization[1] %></option>
                                 <% } %>
                             </select>
                         </div>
@@ -196,7 +196,7 @@
         const courseBin = document.getElementById("extraCourseBin");
         const courseCredit = document.getElementById("extraCourseCredit").value.toUpperCase();
         const courseName = courseSubject + " " + courseNumber;
-        const courseNameBin = courseName + " - Bin: " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
+        const courseNameBin = courseName + " - Bin " + courseBin.selectedIndex + ": " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
         const courseNodeText = document.createTextNode(courseNameBin);
         const courseAdd = document.getElementById("courseAdd");
         // Avoid adding duplicate courses

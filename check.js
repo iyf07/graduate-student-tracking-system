@@ -17,7 +17,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const initialize_data = function (specialization, program, capstone) {
+const initialize_data = function (program) {
   const category = [
     "core",
     "information",
@@ -54,7 +54,7 @@ const degree_audit = async function (
   specialization,
   db
 ) {
-  initialize_data(specialization, program, capstone);
+  initialize_data(program);
   let taken_courses = await preprocess(courses, db);
   for (let i = 0; i < taken_courses.length; i++) {
     let bin_id = taken_courses[i].bin_id;
@@ -82,25 +82,18 @@ const preprocess = async function (courses, db) {
     let course_info = courses_info[i].split(" - ");
     const subject_number = course_info[0].split(" ");
     if (course_info.length == 3) {
-      db.each(
-        `SELECT * FROM BIN WHERE bin_name=?`,
-        course_info[1].substring(5),
-        (err, row) => {
-          const customizedCourse = {
-            subject: subject_number[0],
-            number: subject_number[1],
-            name: "Manual Added Course",
-            credit: Number(course_info[2].substring(8)),
-            bin_id: row.bin_id,
-          };
-          if (customizedCourse.credit == "1.5") {
-            taken_courses.splice(0, 0, customizedCourse);
-          } else {
-            taken_courses.push(customizedCourse);
-          }
-        }
-      );
-      await sleep(100);
+      const customizedCourse = {
+        subject: subject_number[0],
+        number: subject_number[1],
+        name: "Manual Added Course",
+        credit: Number(course_info[2].substring(8)),
+        bin_id: Number(course_info[1].substring(4, 5)),
+      };
+      if (customizedCourse.credit == "1.5") {
+        taken_courses.splice(0, 0, customizedCourse);
+      } else {
+        taken_courses.push(customizedCourse);
+      }
     } else {
       db.each(
         `SELECT * from COURSE WHERE subject=? AND number=? AND name=?`,
@@ -140,10 +133,6 @@ const check_capstone = function (capstone, course) {
   )
     update_data("capstone", course);
   else update_data("elective", course);
-};
-
-const check_elective = function (course) {
-  update_data("elective", course);
 };
 
 //Update progress and taken

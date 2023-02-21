@@ -12,13 +12,14 @@
 - [x] Return student information to frontend
 - [ ] Recommend capstone courses based on capstone track
 ### Frontend
-- [ ] Add print the page feature
-- [ ] Display student information in degree-audit page
+- [ ] Precheck 992 exists without 779/778
+- [X] Add print the page feature
+- [X] Display student information in degree-audit page
 - [x] Add the link to the curriculum page
 - [x] Create an input box for courses from other departments and 490/690
-  - [ ] Add validation
+- [ ] Add validation
 - [x] Turn the block red if a bin is not finished
-  - [ ] Add styles
+- [ ] Add styles
 ## Setup
 1. Install node.js at https://nodejs.org/en/
 2. Verify npm and node: `npm -v node -v`

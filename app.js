@@ -1,11 +1,11 @@
-require('dotenv').config()
+require("dotenv").config();
 const check = require("./check");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const engine = require("ejs-mate");
 const sqlite3 = require("sqlite3").verbose();
 const app = express();
-const port =process.env.PORT;
+const port = process.env.PORT;
 const database = "graduate_tracking_system.db";
 
 // open database
@@ -60,28 +60,21 @@ app.get("/degree-audit", async (req, res) => {
   }
   const studentInfo = req.cookies;
   let data = {};
+  const selectedSpecialization = studentInfo.specialization.split(" - ");
 
   data = await check.degree_audit(
     studentInfo.program,
     studentInfo.capstone,
     studentInfo.course,
-    studentInfo.specialization,
+    selectedSpecialization[0],
     db
   );
 
   info = {
     program: studentInfo.program,
     capstone: studentInfo.capstone,
-    specialization: "N.A.",
+    specialization: selectedSpecialization[1],
   };
-  db.each(
-    "SELECT spec_name FROM SPECIALIZATION WHERE spec_id=?",
-    studentInfo.specialization,
-    (err, row) => {
-      info.specialization = row.spec_name;
-    }
-  );
-  await sleep(300);
   res.render("degree-audit", { data, info });
 });
 app.post("/degree-audit", async (req, res) => {

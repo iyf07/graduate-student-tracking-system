@@ -1,10 +1,11 @@
+require('dotenv').config()
 const check = require("./check");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const engine = require("ejs-mate");
 const sqlite3 = require("sqlite3").verbose();
 const app = express();
-const port = 3000;
+const port =process.env.PORT;
 const database = "graduate_tracking_system.db";
 
 // open database

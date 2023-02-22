@@ -177,7 +177,7 @@ async function spec_dbToSet(spec_set, specialization, courses, db) {
         spec_set.add(row.subject + " " + row.number + " - " + row.name);
       }
     );
-    //Core course
+    //Core and capstone course
     db.each(
       "SELECT subject, number, name from COURSE WHERE bin_id = 5 OR bin_id = 6",
       (err, row) => {
@@ -191,12 +191,20 @@ async function spec_dbToSet(spec_set, specialization, courses, db) {
 }
 //Check whether the taken course is in specialization x
 
-function check_spec(spec_set, courses, db) {
+function check_spec(spec_set, courses, db, capstone) {
   const taken_courses2 = courses.split("&&&");
   for (let i = 0; i < taken_courses2.length; i++) {
     // Exist: remove it from set
-    if (spec_set.has(taken_courses2[i])) {
-      spec_set.delete(taken_courses2[i]);
+    const crs = taken_courses2[i];
+    const c779 = "INLS 779 - Practicum Project Development";
+    const c778 = "INLS 778 - Research Methods and Proposal Development";
+    if (capstone == "research") {
+      spec_set.delete(c779);
+    } else {
+      spec_set.delete(c778);
+    }
+    if (spec_set.has(crs)) {
+      spec_set.delete(crs);
     }
   }
   update_data2(spec_set, db);

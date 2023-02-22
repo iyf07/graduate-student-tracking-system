@@ -10,7 +10,7 @@
 - [x] Change `Not belonging to any bin` to `Elective`
 ### Backend
 - [x] Return student information to frontend
-- [ ] Recommend capstone courses based on capstone track
+- [x] Recommend capstone courses based on capstone track
 ### Frontend
 - [ ] Add print the page feature
 - [ ] Display student information in degree-audit page

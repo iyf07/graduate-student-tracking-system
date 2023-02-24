@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "installCommand": "npm install",
   "builds": [
     {
       "src": "app.js",

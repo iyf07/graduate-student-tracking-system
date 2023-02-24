@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const engine = require("ejs-mate");
 const sqlite3 = require("sqlite3").verbose();
 const app = express();
-const port =process.env.PORT;
+const port =process.env.PORT || 3000;
 const database = "graduate_tracking_system.db";
 
 // open database

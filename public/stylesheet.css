@@ -256,6 +256,10 @@ h5 {
 }
 
 body {
-  background-image: url('unc.jpeg');
+  background-image: url('manning1.JPG');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-attachment: fixed;
+  background-size: cover;
   padding-top: 25px;
 }

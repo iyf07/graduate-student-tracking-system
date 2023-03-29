@@ -254,3 +254,8 @@ h5 {
   border-right: 10px solid transparent;
   border-bottom: 12px solid #eef4f4;
 }
+
+body {
+  background-image: url('unc.jpeg');
+  padding-top: 25px;
+}

@@ -79,18 +79,18 @@ const preprocess = async function (courses, db) {
   const courses_info = courses.split("&&&");
   let taken_courses = [];
   for (let i = 0; i < courses_info.length; i++) {
-    let course_info = courses_info[i].split(" - ");
-    const subject_number = course_info[0].split(" ");
-    if (course_info.length == 3) {
+    let info = courses_info[i].split(" - ");
+    const subject_number = info[0].split(" ");
+    if (info.length === 1) {
       db.each(
         `SELECT * FROM BIN WHERE bin_name=?`,
-        course_info[1].substring(5),
+        subject_number.slice(4).join(' ').slice(0, -1),
         (err, row) => {
           const customizedCourse = {
             subject: subject_number[0],
             number: subject_number[1],
-            name: "Manual Added Course",
-            credit: Number(course_info[2].substring(8)),
+            name: subject_number[2].slice(1).concat(Number(subject_number[2].slice(1)) === 1 ? " credit" : " credits").concat(" (Manually Added Course)"),
+            credit: Number(subject_number[2].slice(1)),
             bin_id: row.bin_id,
           };
           if (customizedCourse.credit == "1.5") {
@@ -106,7 +106,7 @@ const preprocess = async function (courses, db) {
         `SELECT * from COURSE WHERE subject=? AND number=? AND name=?`,
         subject_number[0],
         subject_number[1],
-        course_info[1],
+        info[1],
         (err, row) => {
           if (row.credit == "1.5") {
             taken_courses.splice(0, 0, row);

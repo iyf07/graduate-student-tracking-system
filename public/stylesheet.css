@@ -94,8 +94,12 @@ li {
   overflow: scroll;
 }
 
+.one-line {
+  margin-top: 5px;
+}
+
 .note {
-  font-size: clamp(0.75rem, 0.7161rem + 0.1695vw, 0.875rem);
+  font-size: clamp(0.75rem, 0.4375rem + 1vw, 1rem);
 }
 
 .extra-form-row {
@@ -116,7 +120,7 @@ button {
   border-radius: 0.5rem;
   padding: 0.4rem 1rem;
   width: fit-content;
-  font-size: clamp(0.75rem, 0.7161rem + 0.1695vw, 0.875rem);
+  font-size: clamp(0.75rem, 0.4375rem + 1vw, 1rem);
 }
 
 .button-show {
@@ -124,7 +128,6 @@ button {
   color: rgb(54, 121, 255);
   padding: 0;
   padding-left: 0.4rem;
-  font-size: 0.9rem;
 }
 
 .button-submit {

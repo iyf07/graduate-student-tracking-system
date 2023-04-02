@@ -13,10 +13,6 @@ var total_bins_num = {
 }; // [core_num, bin1_num, bin2_num, bin3_num, bin4_num, capstone_num,elective_num ]
 var taken_credit = 0;
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 const initialize_data = function (program) {
   const category = [
     "core",
@@ -82,6 +78,7 @@ const preprocess = async function (courses, db, recommandSet) {
   const courses_info = courses.split("&&&");
   let takenCheckForProgress = [];
   let takenCheckForRecommand = "";
+  let creditDict = [[], [], [], [], []];
   for (let i = 0; i < courses_info.length; i++) {
     let course_info = courses_info[i].split(" - ");
     const subject_number = course_info[0].split(" ");
@@ -89,7 +86,7 @@ const preprocess = async function (courses, db, recommandSet) {
       const customizedCourse = {
         subject: subject_number[0],
         number: subject_number[1],
-        name: "Manual Added Course",
+        name: "Customized Course",
         credit: Number(course_info[2].substring(8)),
         bin_id: Number(course_info[1].substring(4, 5)),
       };
@@ -105,11 +102,15 @@ const preprocess = async function (courses, db, recommandSet) {
       if (recommandSet.has(takenCheckForRecommand)) {
         recommandSet.delete(takenCheckForRecommand);
       }
-      if (customizedCourse.credit == "1.5") {
-        takenCheckForProgress.splice(0, 0, customizedCourse);
-      } else {
-        takenCheckForProgress.push(customizedCourse);
-      }
+      if (customizedCourse.credit == "1") creditDict[0].push(customizedCourse);
+      else if (customizedCourse.credit == "1.5")
+        creditDict[1].push(customizedCourse);
+      else if (customizedCourse.credit == "2")
+        creditDict[2].push(customizedCourse);
+      else if (customizedCourse.credit == "3")
+        creditDict[3].push(customizedCourse);
+      else if (customizedCourse.credit == "4")
+        creditDict[4].push(customizedCourse);
     } else {
       const coursePromise = new Promise((resolve) => {
         db.each(
@@ -129,11 +130,12 @@ const preprocess = async function (courses, db, recommandSet) {
             if (recommandSet.has(takenCheckForRecommand)) {
               recommandSet.delete(takenCheckForRecommand);
             }
-            if (row.credit == "1.5") {
-              takenCheckForProgress.splice(0, 0, row);
-            } else {
-              takenCheckForProgress.push(row);
-            }
+
+            if (row.credit == "1") creditDict[0].push(row);
+            else if (row.credit == "1.5") creditDict[1].push(row);
+            else if (row.credit == "2") creditDict[2].push(row);
+            else if (row.credit == "3") creditDict[3].push(row);
+            else if (row.credit == "4") creditDict[4].push(row);
           },
           () => resolve()
         );
@@ -141,6 +143,11 @@ const preprocess = async function (courses, db, recommandSet) {
       await coursePromise;
     }
   }
+  creditDict.forEach((credit) => {
+    credit.forEach((course) => {
+      takenCheckForProgress.push(course);
+    });
+  });
   return [takenCheckForProgress, recommandSet];
 };
 

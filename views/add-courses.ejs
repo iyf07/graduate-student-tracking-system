@@ -1,142 +1,144 @@
-<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Graduate Student Tracking System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="stylesheet" href="/stylesheet.css">
-</head>
-<body>
-<div class="container">
-    <div class="row">
-        <div class="mb-3">
-            <h3 class="text-center">
-                Graduate Student Tracking System
-            </h3>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/stylesheet.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="block">
+        <div class="card">
+          <h3 class="center"><b>Graduate Student Tracking System</b></h3>
         </div>
-    </div>
-    <div class="row">
-        <div class="mb-4 col-sm-6">
-            <div class="card">
-                <div class="card-body">
-                    <form action="/degree-audit" method="POST">
-                        <input type="hidden" name="course" id="courseAdd" value="<%= cookies ? cookies.course : {} %>">
-                        <input type="hidden" name="address" id="address">
-                        <h5 class="card-title text-center">Add Courses</h5>
-                        <div class="mb-4"><a href="https://sils.unc.edu/programs/graduate/msls/curriculum-spring2022"
-                                             class="card-text">Check out all courses here!</a>
-                        </div>
-                        <p class="card-text mb-4">Some text here.</p>
-                        <div class="mb-4">
-                            <label for="programSelect" class="form-label">Program</label>
-                            <select class="form10-select form-select" aria-label=".form-select example"
-                                    id="programSelect" name="program"
-                                    required>
-                                <option value="MSLS" <%= cookies && cookies.program === "MSLS" ? "selected" : {} %>>MSLS
-                                    - Master of Science in Library Science
+      </div>
+      <div class="block">
+        <div class="card">
+            <h4 class="center"><b>Add Courses</b></h4>
+            <p>
+            Check out all SILS courses
+            <a href="https://sils.unc.edu/programs/graduate/msls/curriculum-spring2022">here</a>!
+            </p>
+            <p>
+            For a non-SILS course, INLS 490, INLS 690, INLS 890, or a SILS course
+            that is permitted to fulfill a different bin, please add the course
+            manually.
+            </p>
+            <form id="courseForm" action="/degree-audit/generate" method="POST">
+                <input type="hidden" name="course" id="courseAdd" value="<%= cookies ? cookies.course : {} %>"/>
+                <input type="hidden" name="address" id="address" />
+                <div>
+                    <label for="programSelect" class="form-label">Program</label>
+                    <select
+                    class="form10-select form-select"
+                    aria-label=".form-select example"
+                    id="programSelect"
+                    name="program"
+                    required
+                    >
+                    <option value="MSLS" <%= cookies && cookies.program === "MSLS" ? "selected" : "" %>>
+                        MSLS - Master of Science in Library Science
+                    </option>
+                    <option value="MSIS" <%= cookies && cookies.program === "MSIS" ? "selected" : "" %>>
+                        MSIS - Master of Science in Information Science
+                    </option>                          
+                    </select>  
+                </div>
+                <div>
+                    <label for="specializationSelect" class="form-label">Specialization</label>
+                    <select
+                        class="form10-select form-select"
+                        aria-label=".form-select example"
+                        id="specializationSelect"
+                        name="specialization"
+                        required
+                    >
+                    <% for (let specialization of specializations){ %>
+                        <option value="<%= specialization[0]+ ' - ' +specialization[1] %>" <%= cookies && cookies.specialization === String(specialization[0]) ? "selected" : {} %>><%= specialization[0] === 0 ? "None" : specialization[1] %></option>
+                    <% } %>
+                    </select>
+                </div>           
+                <div>
+                    <label for="capstoneSelect" class="form-label">Capstone Track</label>
+                    <select class="form10-select form-select" aria-label=".form-select example" id="capstoneSelect" name="capstone" required>
+                        <option value="research" <%= cookies && cookies.capstone === "research" ? "selected" : {} %>>
+                            Independent Research
+                        </option>
+                        <option value="practicum" <%= cookies && cookies.capstone === "practicum" ? "selected" : {} %>>
+                            Practicum Experience
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label for="courseSelect" class="form-label">Course</label>
+                    <button type="button" class="button-show" onclick="manualInput()">Cannot find course? Input manually</button>
+                    <div class="form-row" id="CourseSelection">
+                        <select class="form10-select form-select" aria-label=".form-select example" id="courseSelect" required>
+                            <% for (let course of courses) { %>
+                                <option value=<%= 0 %>>
+                                    <%= `${course[0]} ${course[1]} - ${course[2]}` %>
                                 </option>
-                                <option value="MSIS" <%= cookies && cookies.program === "MSIS" ? "selected" : {} %>>MSIS
-                                    - Master of Science in Information Science
-                                </option>
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label for="specializationSelect" class="form-label">Specialization</label>
-                            <select class="form10-select form-select" aria-label=".form-select example"
-                                    id="specializationSelect" name="specialization"
-                                    required>
-                                <% for (let specialization of specializations){ %>
-                                    <option value="<%= specialization[0]+ ' - ' +specialization[1] %>" <%= cookies && cookies.specialization === String(specialization[0]) ? "selected" : {} %>><%= specialization[0] === 0 ? "None" : specialization[1] %></option>
-                                <% } %>
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label for="capstoneSelect" class="form-label">Capstone Track</label>
-                            <select class="form10-select form-select" aria-label=".form-select example"
-                                    id="capstoneSelect" name="capstone"
-                                    required>
-                                <option value="research" <%= cookies && cookies.capstone === "research" ? "selected" : {} %>>
-                                    Independent Research
-                                </option>
-                                <option value="practicum" <%= cookies && cookies.capstone === "practicum" ? "selected" : {} %>>
-                                    Practicum Experience
-                                </option>
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label for="courseSelect" class="form-label">Course</label>
-                            <div class="row">
-                                <div class="col-10">
-                                    <select class="form10-select form-select" aria-label=".form-select example"
-                                            id="courseSelect" required>
-                                        <% for (let course of courses){ %>
-                                            <option value=<%= 0 %>><%= `${course[0]} ${course[1]} - ${course[2]}` %></option>
-                                        <% } %>
-                                    </select>
-                                </div>
-                                <div class="col-2">
-                                    <button type="button" onclick="addCourse()" class="button-add">Add</button>
-                                </div>
-                            </div>
-                        </div>
-                        <label for="extraCourseSelect" class="form-label">Other Course</label>
-                        <div class="mb-4 row" id="extraCourseSelect">
-                            <div class="col-2">
-                                <input type="text" class="form-control" placeholder="INLS" id="extraCourseSubject">
-                            </div>
-                            <div class="col-2">
-                                <input type="text" class="form-control" placeholder="0000" id="extraCourseNumber">
-                            </div>
-                            <div class="col-3">
-                                <select class="form10-select form-select" aria-label=".form-select example"
-                                        id="extraCourseBin">
-                                    <% for (let bin of bins){ %>
-                                        <option value=<%= bin[0] %>><%= bin[1] %></option>
-                                    <% } %>
-                                </select>
-                            </div>
-                            <div class="col-3">
-                                <select class="form10-select form-select" aria-label=".form-select example" id="extraCourseCredit">
-                                    <option value=1.5> 1.5 credits</option>
-                                    <option value=3> 3 credits</option>
-                                </select>
-                            </div>
-                            <div class="col-2">
-                                <button type="button" onclick="addExtraCourse()" class="button-add">Add</button>
-                            </div>
+                            <% } %>
+                        </select>
+                        <button type="button" onclick="addCourse()" class="button-add">Add</button>
+                    </div>
+                    <div class="extra-form-row" id="extraCourseSelection">
+                        <div>
+                            <input type="text" class="form-control" placeholder="INLS" id="extraCourseSubject">
+                            <input type="text" class="form-control" placeholder="400" id="extraCourseNumber">
                         </div>
                         <div>
-                            <button class="button-81">Generate Degree Audit</button>
-                            <button class="button-81" onclick="changeAddress()">Save</button>
+                            <select class="form10-select form-select" aria-label=".form-select example"
+                                id="extraCourseBin"
+                            >
+                                <% for (let bin of bins) { %>
+                                    <option value=<%= bin[0] %>>
+                                        <%= bin[1] %>
+                                    </option>
+                                <% } %>
+                            </select>
+                            <select class="form10-select form-select" aria-label=".form-select example"
+                                id="extraCourseCredit"
+                            >
+                                <option value=1>1 credit</option>
+                                <option value=1.5>1.5 credits</option>
+                                <option value=2>2 credits</option>
+                                <option value=3 selected>3 credits</option>
+                                <option value=4>4 credits</option>
+                            </select>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="mb-4 col-sm-6" id="selectcourse">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Selected Courses</h5>
-                    <p class="card-text">Some text here.</p>
-                    <ul class="mb-3 list-group list-group-flush" id="courseSection">
-                        <% if(cookies && cookies.course && cookies.course.length > 0){
-                                for(let course of cookies.course.split('&&&').sort()){ %>
-                            <li class="list-group-item" id="<%= course %>"><%= course %>
-                                <button class="btn-remove right" type="button" onclick="remove(this)">
-                                    Remove
-                                </button>
-                            </li>
-                        <% }} %>
-                    </ul>
-                    <div>
-                        <button class="btn-remove" type="button" onclick="removeAll()">Remove All Courses
-                        </button>
+                        <button type="button" onclick="addExtraCourse()" class="button-add">Add</button>
                     </div>
                 </div>
+                <div>
+                    <button class="button-submit">Generate Degree Audit</button>
+                </div>
+            </form>
+        </div>
+        <div class="card" id="selectcourse">
+            <h4 class="center"><b>Selected Courses</b></h4>
+            <ul id="courseSection">
+                <% if(cookies && cookies.course && cookies.course.length > 0){
+                        for(let course of cookies.course.split('&&&').sort()){ %>
+                    <li class="list-group-item" id="<%= course %>"><%= course %>
+                        <button class="btn-remove" type="button" onclick="remove(this)">
+                            Remove
+                        </button>
+                    </li>
+                <% }} %>
+            </ul>
+            <div>
+                <button class="btn-remove" type="button" onclick="removeAll()">Remove All Courses </button>
             </div>
         </div>
     </div>
@@ -153,7 +155,6 @@
         const course = document.getElementById("courseSelect");
         const courseNodeText = document.createTextNode(course.options[course.selectedIndex].text);
         const courseAdd = document.getElementById("courseAdd");
-
         // Avoid adding duplicate courses
         for (let courseAdded of courseAdd.value.split("&&&")) {
             if (course.options[course.selectedIndex].text === courseAdded) {
@@ -161,7 +162,6 @@
                 return;
             }
         }
-
         if (courseAdd.value.length !== 0) {
             courseAdd.value += "&&&" + course.options[course.selectedIndex].text;
         } else {
@@ -184,6 +184,7 @@
         removeButton.append(removeButtonText);
         courseNode.append(removeButton);
         courseSection.appendChild(courseNode);
+        save();
     }
 
     function addExtraCourse() {
@@ -196,8 +197,10 @@
         const courseBin = document.getElementById("extraCourseBin");
         const courseCredit = document.getElementById("extraCourseCredit").value.toUpperCase();
         const courseName = courseSubject + " " + courseNumber;
+        const courseValue = courseName + " - " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
         const courseNameBin = courseName + " - Bin " + courseBin.selectedIndex + ": " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
-        const courseNodeText = document.createTextNode(courseNameBin);
+        //const courseNodeText = document.createTextNode(courseNameBin);
+        const courseNodeText = document.createTextNode(courseValue);
         const courseAdd = document.getElementById("courseAdd");
         // Avoid adding duplicate courses
         for (let courseAdded of courseAdd.value.split("&&&")) {
@@ -230,6 +233,7 @@
         removeButton.append(removeButtonText);
         courseNode.append(removeButton);
         courseSection.appendChild(courseNode);
+        save();
     }
 
     // "Remove" button
@@ -243,6 +247,7 @@
         }
         courseAdd.value = newValue.join("&&&");
         el.parentNode.remove();
+        save();
     }
 
     // "Remove All Courses" button
@@ -259,11 +264,32 @@
             courseSection.removeChild(courseSection.lastElementChild);
             courseAdd.value = newValue.join("&&&");
         }
+        save();
     }
 
-    // "save" button and "Generate Degree Audit" button go to different address
-    function changeAddress() {
-        const address = document.getElementById("address");
-        address.value = "save";
+    function save(){
+        const form = document.getElementById('courseForm');
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/degree-audit/save');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(new FormData(form));
     }
+
+   function manualInput(){
+        const block = document.getElementById('extraCourseSelection');
+        const originBlock = document.getElementById('CourseSelection');
+        const showButton = document.getElementsByClassName('button-show')[0];
+        if( block.style.display === "flex"){
+            block.style.display = "none";
+            originBlock.style.display = "flex";
+            showButton.style.color="rgb(54, 121, 255)";
+            showButton.textContent= "Cannot find course? Input manually"
+        }
+        else{
+            block.style.display = "flex";
+            originBlock.style.display = "none";
+            showButton.textContent= "Back to selection"
+        }
+    }
+
 </script>

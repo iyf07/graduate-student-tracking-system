@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const engine = require("ejs-mate");
 const sqlite3 = require("sqlite3").verbose();
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 const database = "graduate_tracking_system.db";
 
 // open database
@@ -21,10 +21,6 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 app.use(cookieParser());
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 app.get("/", async (req, res) => {
   const cookies = req.cookies;
@@ -102,12 +98,13 @@ app.get("/degree-audit", async (req, res) => {
   };
   res.render("degree-audit", { data, info });
 });
-app.post("/degree-audit", async (req, res) => {
+
+app.post("/degree-audit/:status", async (req, res) => {
   res.cookie("course", req.body.course);
   res.cookie("program", req.body.program);
   res.cookie("specialization", req.body.specialization);
   res.cookie("capstone", req.body.capstone);
-  if (req.body.address === "save") {
+  if (req.params.status === "save") {
     res.redirect("/");
   } else {
     res.redirect("/degree-audit");

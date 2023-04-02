@@ -196,6 +196,7 @@ table * {
 
 .table-success {
   --bs-table-bg: #e0ecf3;
+  border-bottom: solid 1.5px rgba(6, 53, 111, 0.106);
 }
 
 .table-primary {
@@ -213,6 +214,7 @@ table * {
 .table-dark {
   --bs-table-bg: #b3cde1;
   --bs-table-color: rgb(1, 1, 1);
+  border: 0;
 }
 
 td {

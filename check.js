@@ -13,10 +13,6 @@ var total_bins_num = {
 }; // [core_num, bin1_num, bin2_num, bin3_num, bin4_num, capstone_num,elective_num ]
 var taken_credit = 0;
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 const initialize_data = function (program) {
   const category = [
     "core",
@@ -82,15 +78,15 @@ const preprocess = async function (courses, db, recommandSet) {
   const courses_info = courses.split("&&&");
   let takenCheckForProgress = [];
   let takenCheckForRecommand = "";
+  let creditDict = [[], [], [], [], []];
   for (let i = 0; i < courses_info.length; i++) {
-<<<<<<< HEAD
     let course_info = courses_info[i].split(" - ");
     const subject_number = course_info[0].split(" ");
     if (course_info.length == 3) {
       const customizedCourse = {
         subject: subject_number[0],
         number: subject_number[1],
-        name: "Manual Added Course",
+        name: "Customized Course",
         credit: Number(course_info[2].substring(8)),
         bin_id: Number(course_info[1].substring(4, 5)),
       };
@@ -106,11 +102,15 @@ const preprocess = async function (courses, db, recommandSet) {
       if (recommandSet.has(takenCheckForRecommand)) {
         recommandSet.delete(takenCheckForRecommand);
       }
-      if (customizedCourse.credit == "1.5") {
-        takenCheckForProgress.splice(0, 0, customizedCourse);
-      } else {
-        takenCheckForProgress.push(customizedCourse);
-      }
+      if (customizedCourse.credit == "1") creditDict[0].push(customizedCourse);
+      else if (customizedCourse.credit == "1.5")
+        creditDict[1].push(customizedCourse);
+      else if (customizedCourse.credit == "2")
+        creditDict[2].push(customizedCourse);
+      else if (customizedCourse.credit == "3")
+        creditDict[3].push(customizedCourse);
+      else if (customizedCourse.credit == "4")
+        creditDict[4].push(customizedCourse);
     } else {
       const coursePromise = new Promise((resolve) => {
         db.each(
@@ -130,57 +130,24 @@ const preprocess = async function (courses, db, recommandSet) {
             if (recommandSet.has(takenCheckForRecommand)) {
               recommandSet.delete(takenCheckForRecommand);
             }
-            if (row.credit == "1.5") {
-              takenCheckForProgress.splice(0, 0, row);
-            } else {
-              takenCheckForProgress.push(row);
-            }
+
+            if (row.credit == "1") creditDict[0].push(row);
+            else if (row.credit == "1.5") creditDict[1].push(row);
+            else if (row.credit == "2") creditDict[2].push(row);
+            else if (row.credit == "3") creditDict[3].push(row);
+            else if (row.credit == "4") creditDict[4].push(row);
           },
           () => resolve()
         );
       });
       await coursePromise;
-=======
-    let info = courses_info[i].split(" - ");
-    const subject_number = info[0].split(" ");
-    if (info.length === 1) {
-      db.each(
-        `SELECT * FROM BIN WHERE bin_name=?`,
-        subject_number.slice(4).join(' ').slice(0, -1),
-        (err, row) => {
-          const customizedCourse = {
-            subject: subject_number[0],
-            number: subject_number[1],
-            name: subject_number[2].slice(1).concat(Number(subject_number[2].slice(1)) === 1 ? " credit" : " credits").concat(" (Manually Added Course)"),
-            credit: Number(subject_number[2].slice(1)),
-            bin_id: row.bin_id,
-          };
-          if (customizedCourse.credit == "1.5") {
-            taken_courses.splice(0, 0, customizedCourse);
-          } else {
-            taken_courses.push(customizedCourse);
-          }
-        }
-      );
-      await sleep(100);
-    } else {
-      db.each(
-        `SELECT * from COURSE WHERE subject=? AND number=? AND name=?`,
-        subject_number[0],
-        subject_number[1],
-        info[1],
-        (err, row) => {
-          if (row.credit == "1.5") {
-            taken_courses.splice(0, 0, row);
-          } else {
-            taken_courses.push(row);
-          }
-        }
-      );
-      await sleep(300);
->>>>>>> main
     }
   }
+  creditDict.forEach((credit) => {
+    credit.forEach((course) => {
+      takenCheckForProgress.push(course);
+    });
+  });
   return [takenCheckForProgress, recommandSet];
 };
 
@@ -226,7 +193,6 @@ module.exports = {
 //Recommanded
 //Put the specialization and core courses to spec_set
 
-<<<<<<< HEAD
 async function spec_dbToSet(specSet, specialization, capstone, db) {
   return new Promise((resolve) => {
     db.serialize(() => {
@@ -275,49 +241,6 @@ async function spec_dbToSet(specSet, specialization, capstone, db) {
       resolve();
     }, 200);
   });
-=======
-async function spec_dbToSet(spec_set, specialization, courses, db) {
-  db.serialize(() => {
-    //Specialization
-    db.each(
-      `SELECT subject, number, name from COURSE_TO_SPEC WHERE spec_id = ?`,
-      specialization,
-      (err, row) => {
-        spec_set.add(row.subject + " " + row.number + " - " + row.name);
-      }
-    );
-    //Core and capstone course
-    db.each(
-      "SELECT subject, number, name from COURSE WHERE bin_id = 5 OR bin_id = 6",
-      (err, row) => {
-        spec_set.add(row.subject + " " + row.number + " - " + row.name);
-      }
-    );
-  });
-
-  await sleep(300);
-  check_spec(spec_set, courses, db);
-}
-//Check whether the taken course is in specialization x
-
-function check_spec(spec_set, courses, db, capstone) {
-  const taken_courses2 = courses.split("&&&");
-  for (let i = 0; i < taken_courses2.length; i++) {
-    // Exist: remove it from set
-    const crs = taken_courses2[i];
-    const c779 = "INLS 779 - Practicum Project Development";
-    const c778 = "INLS 778 - Research Methods and Proposal Development";
-    if (capstone == "research") {
-      spec_set.delete(c779);
-    } else {
-      spec_set.delete(c778);
-    }
-    if (spec_set.has(crs)) {
-      spec_set.delete(crs);
-    }
-  }
-  update_data2(spec_set, db);
->>>>>>> main
 }
 
 //Distribute the remaining course to each bin

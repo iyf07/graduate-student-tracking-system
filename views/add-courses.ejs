@@ -13,9 +13,9 @@
 <body>
 <div class="container">
     <div class="row">
-        <div class="mb-3">
+        <div class="mb-3 card">
             <h3 class="text-center">
-                Graduate Student Tracking System
+                <br><b>Graduate Student Tracking System</b><br><br>
             </h3>
         </div>
     </div>
@@ -23,14 +23,18 @@
         <div class="mb-4 col-sm-6">
             <div class="card">
                 <div class="card-body">
-                    <form action="/degree-audit" method="POST">
+                    <form id="courseForm" action="/degree-audit/generate" method="POST">
                         <input type="hidden" name="course" id="courseAdd" value="<%= cookies ? cookies.course : {} %>">
                         <input type="hidden" name="address" id="address">
-                        <h5 class="card-title text-center">Add Courses</h5>
-                        <div class="mb-4"><a href="https://sils.unc.edu/programs/graduate/msls/curriculum-spring2022"
-                                             class="card-text">Check out all courses here!</a>
-                        </div>
-                        <p class="card-text mb-4">Some text here.</p>
+                        <h4 class="card-title text-center mb-3"><b>Add Courses</b></h4>
+                        <p class="card-text mb-3">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Check out all SILS courses <a
+                                        href="https://sils.unc.edu/programs/graduate/msls/curriculum-spring2022">here</a>!
+                            </li>
+                            <li class="list-group-item">For a non-SILS course, INLS 490, INLS 690, INLS 890, or a SILS course that is permitted to fulfill a different bin, please add the course manually.</li>
+                        </ul>
+                        </p>
                         <div class="mb-4">
                             <label for="programSelect" class="form-label">Program</label>
                             <select class="form10-select form-select" aria-label=".form-select example"
@@ -83,13 +87,12 @@
                                 </div>
                             </div>
                         </div>
-                        <label for="extraCourseSelect" class="form-label">Other Course</label>
                         <div class="mb-4 row" id="extraCourseSelect">
                             <div class="col-2">
                                 <input type="text" class="form-control" placeholder="INLS" id="extraCourseSubject">
                             </div>
                             <div class="col-2">
-                                <input type="text" class="form-control" placeholder="0000" id="extraCourseNumber">
+                                <input type="text" class="form-control" placeholder="400" id="extraCourseNumber">
                             </div>
                             <div class="col-3">
                                 <select class="form10-select form-select" aria-label=".form-select example"
@@ -100,9 +103,13 @@
                                 </select>
                             </div>
                             <div class="col-3">
-                                <select class="form10-select form-select" aria-label=".form-select example" id="extraCourseCredit">
-                                    <option value=1.5> 1.5 credits</option>
-                                    <option value=3> 3 credits</option>
+                                <select class="form10-select form-select" aria-label=".form-select example"
+                                        id="extraCourseCredit">
+                                    <option value=1>1 credit</option>
+                                    <option value=1.5>1.5 credits</option>
+                                    <option value=2>2 credits</option>
+                                    <option value=3 selected>3 credits</option>
+                                    <option value=4>4 credits</option>
                                 </select>
                             </div>
                             <div class="col-2">
@@ -111,7 +118,6 @@
                         </div>
                         <div>
                             <button class="button-81">Generate Degree Audit</button>
-                            <button class="button-81" onclick="changeAddress()">Save</button>
                         </div>
                     </form>
                 </div>
@@ -120,8 +126,9 @@
         <div class="mb-4 col-sm-6" id="selectcourse">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title text-center">Selected Courses</h5>
-                    <p class="card-text">Some text here.</p>
+                    <h4 class="card-title text-center mb-3"><b>Selected Courses</b></h4>
+                    <p class="card-text">
+                    </p>
                     <ul class="mb-3 list-group list-group-flush" id="courseSection">
                         <% if(cookies && cookies.course && cookies.course.length > 0){
                                 for(let course of cookies.course.split('&&&').sort()){ %>
@@ -184,6 +191,7 @@
         removeButton.append(removeButtonText);
         courseNode.append(removeButton);
         courseSection.appendChild(courseNode);
+        save();
     }
 
     function addExtraCourse() {
@@ -196,7 +204,17 @@
         const courseBin = document.getElementById("extraCourseBin");
         const courseCredit = document.getElementById("extraCourseCredit").value.toUpperCase();
         const courseName = courseSubject + " " + courseNumber;
+<<<<<<< HEAD
         const courseNameBin = courseName + " - Bin " + courseBin.selectedIndex + ": " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
+=======
+        let courseNameBin;
+        if(courseCredit === "1"){
+            courseNameBin = courseName + " (" + courseCredit + " credit, " + courseBin.options[courseBin.selectedIndex].text + ")";
+        }else{
+            courseNameBin = courseName + " (" + courseCredit + " credits, " + courseBin.options[courseBin.selectedIndex].text + ")";
+        }
+
+>>>>>>> main
         const courseNodeText = document.createTextNode(courseNameBin);
         const courseAdd = document.getElementById("courseAdd");
         // Avoid adding duplicate courses
@@ -230,6 +248,7 @@
         removeButton.append(removeButtonText);
         courseNode.append(removeButton);
         courseSection.appendChild(courseNode);
+        save();
     }
 
     // "Remove" button
@@ -243,6 +262,7 @@
         }
         courseAdd.value = newValue.join("&&&");
         el.parentNode.remove();
+        save();
     }
 
     // "Remove All Courses" button
@@ -259,11 +279,13 @@
             courseSection.removeChild(courseSection.lastElementChild);
             courseAdd.value = newValue.join("&&&");
         }
+        save();
     }
 
-    // "save" button and "Generate Degree Audit" button go to different address
-    function changeAddress() {
-        const address = document.getElementById("address");
-        address.value = "save";
+    function save(){
+        const form = document.getElementById('courseForm');
+        form.setAttribute('action', "/degree-audit/save");
+        form.submit();
+        form.setAttribute('action', "/degree-audit/generate");
     }
 </script>

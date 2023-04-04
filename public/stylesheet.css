@@ -254,3 +254,12 @@ h5 {
   border-right: 10px solid transparent;
   border-bottom: 12px solid #eef4f4;
 }
+
+body {
+  background-image: url('manning1.jpg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-attachment: fixed;
+  background-size: cover;
+  padding-top: 25px;
+}

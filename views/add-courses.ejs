@@ -35,8 +35,7 @@
             manually.
             </p>
             <form id="courseForm" action="/degree-audit/generate" method="POST">
-                <input type="hidden" name="course" id="courseAdd" value="<%= cookies ? cookies.course : {} %>"/>
-                <input type="hidden" name="address" id="address" />
+                <input type="hidden" name="course" id="courseAdd" value="<%= cookies ? cookies.course : null %>"/>
                 <div>
                     <label for="programSelect" class="form-label">Program</label>
                     <select
@@ -81,7 +80,7 @@
                 </div>
                 <div>
                     <label for="courseSelect" class="form-label">Course</label>
-                    <button type="button" class="button-show" onclick="manualInput()">Cannot find course? Input manually</button>
+                    <button type="button" class="button-show" onclick="manualInput()">Course not found? Enter course manually</button>
                     <div class="form-row" id="CourseSelection">
                         <select class="form10-select form-select" aria-label=".form-select example" id="courseSelect" required>
                             <% for (let course of courses) { %>
@@ -129,13 +128,20 @@
             <h4 class="center"><b>Selected Courses</b></h4>
             <ul id="courseSection">
                 <% if(cookies && cookies.course && cookies.course.length > 0){
-                        for(let course of cookies.course.split('&&&').sort()){ %>
-                    <li class="list-group-item" id="<%= course %>"><%= course %>
+                    let display;
+                        for(let course of cookies.course.split('&&&').sort()){
+                            if(course.split(' - ').length===3){
+                                const splits = course.split(' - ');
+                                display = `${splits[0]} (${splits[1].split(': ')[1]}, ${splits[2].split(': ')[1]} ${splits[2].split(': ')[0]})`;
+                            }else {
+                                display = course;
+                            }%>
+                    <li class="list-group-item" id="<%= course %>"><%= display %>
                         <button class="btn-remove" type="button" onclick="remove(this)">
                             Remove
                         </button>
                     </li>
-                <% }} %>
+                <% }}%>
             </ul>
             <div>
                 <button class="btn-remove" type="button" onclick="removeAll()">Remove All Courses </button>
@@ -188,6 +194,10 @@
     }
 
     function addExtraCourse() {
+        if(!document.getElementById("extraCourseSubject").value || !document.getElementById("extraCourseNumber").value){
+            alert("Please enter course subject and course number.")
+            return;
+        }
         const removeButton = document.createElement("button");
         const removeButtonText = document.createTextNode("Remove");
         const courseSection = document.getElementById("courseSection");
@@ -197,7 +207,7 @@
         const courseBin = document.getElementById("extraCourseBin");
         const courseCredit = document.getElementById("extraCourseCredit").value.toUpperCase();
         const courseName = courseSubject + " " + courseNumber;
-        const courseValue = courseName + " - " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
+        const courseValue = courseName + " (" + courseBin.options[courseBin.selectedIndex].text + ", "+ courseCredit + " Credits)";
         const courseNameBin = courseName + " - Bin " + courseBin.selectedIndex + ": " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
         //const courseNodeText = document.createTextNode(courseNameBin);
         const courseNodeText = document.createTextNode(courseValue);
@@ -268,11 +278,14 @@
     }
 
     function save(){
-        const form = document.getElementById('courseForm');
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/degree-audit/save');
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.send(new FormData(form));
+        const courseAdd = document.getElementById("courseAdd");
+        const program = document.getElementById("programSelect");
+        const specialization = document.getElementById("specializationSelect");
+        const capstone = document.getElementById("capstoneSelect");
+        document.cookie = `course=${courseAdd.value}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
+        document.cookie = `program=${program.value}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
+        document.cookie = `specialization=${specialization.value}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
+        document.cookie = `capstone=${capstone.value}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
     }
 
    function manualInput(){
@@ -283,12 +296,12 @@
             block.style.display = "none";
             originBlock.style.display = "flex";
             showButton.style.color="rgb(54, 121, 255)";
-            showButton.textContent= "Cannot find course? Input manually"
+            showButton.textContent= "Course not found? Enter course manually"
         }
         else{
             block.style.display = "flex";
             originBlock.style.display = "none";
-            showButton.textContent= "Back to selection"
+            showButton.textContent= "Back to course drop-down list"
         }
     }
 

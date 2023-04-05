@@ -79,12 +79,6 @@ app.get("/degree-audit", async (req, res) => {
             data[category]["recommend"] = recommend;
         }
     }
-    if (taken.length > 0) {
-      data[category]["taken"] = taken;
-    }
-    if (recommend.length > 0) {
-      data[category]["recommend"] = recommend;
-    }
   const studentInfo = req.cookies;
   let data = {};
   const selectedSpecialization = studentInfo.specialization.split(" - ");

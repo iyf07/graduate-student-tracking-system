@@ -49,7 +49,7 @@ for (let category of Object.keys(data)) {
                 <h4 class="center"><b>Degree Audit</b></h4>
                 <ul class="list-group">
                     <li>Program: <b><%= info['program'] %></b></li>
-                    <li>Specialization: <b><%= info['specialization']==="" ? info['specialization'] : "Not Chosen" %></b></li>
+                    <li>Specialization: <b><%= info['specialization']==="null" ? "Not chosen": info['specialization'] %></b></li>
                     <li>Capstone: <b><%= capstone%></b></li>
                 </ul>
                 <div class="one-line operate">

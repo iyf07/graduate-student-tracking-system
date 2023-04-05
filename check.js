@@ -86,7 +86,7 @@ const preprocess = async function (courses, db, recommandSet) {
       const customizedCourse = {
         subject: subject_number[0],
         number: subject_number[1],
-        name: "Customized Course",
+        name: course_info[2].substring(8).concat(" ", Number(course_info[2].substring(8))===1? "credit" : "credits"),
         credit: Number(course_info[2].substring(8)),
         bin_id: Number(course_info[1].substring(4, 5)),
       };

@@ -1,75 +1,76 @@
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8"/>
     <meta
-      name="viewport"
-      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+            name="viewport"
+            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>Graduate Student Tracking System</title>
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
-      crossorigin="anonymous"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+            crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="/stylesheet.css" />
-  </head>
-  <body>
-    <div class="container">
-      <div class="block">
+    <link rel="stylesheet" href="/stylesheet.css"/>
+</head>
+<body>
+<div class="container">
+    <div class="block">
         <div class="card">
-          <h3 class="center"><b>Graduate Student Tracking System</b></h3>
+            <h3 class="center"><b>Graduate Student Tracking System</b></h3>
         </div>
-      </div>
-      <div class="block">
+    </div>
+    <div class="block">
         <div class="card">
             <h4 class="center"><b>Add Courses</b></h4>
             <p>
-            Check out all SILS courses
-            <a href="https://sils.unc.edu/programs/graduate/msls/curriculum-spring2022">here</a>!
+                Check out all SILS courses
+                <a href="https://sils.unc.edu/programs/graduate/msls/curriculum-spring2022">here</a>!
             </p>
             <p>
-            For a non-SILS course, INLS 490, INLS 690, INLS 890, or a SILS course
-            that is permitted to fulfill a different bin, please add the course
-            manually.
+                For a non-SILS course, INLS 490, INLS 690, INLS 890, or a SILS course
+                that is permitted to fulfill a different bin, please add the course
+                manually.
             </p>
             <form id="courseForm" action="/degree-audit/generate" method="POST">
                 <input type="hidden" name="course" id="courseAdd" value="<%= cookies ? cookies.course : null %>"/>
                 <div>
                     <label for="programSelect" class="form-label">Program</label>
                     <select
-                    class="form10-select form-select"
-                    aria-label=".form-select example"
-                    id="programSelect"
-                    name="program"
-                    required
+                            class="form10-select form-select"
+                            aria-label=".form-select example"
+                            id="programSelect"
+                            name="program"
+                            required
                     >
-                    <option value="MSLS" <%= cookies && cookies.program === "MSLS" ? "selected" : "" %>>
-                        MSLS - Master of Science in Library Science
-                    </option>
-                    <option value="MSIS" <%= cookies && cookies.program === "MSIS" ? "selected" : "" %>>
-                        MSIS - Master of Science in Information Science
-                    </option>                          
-                    </select>  
+                        <option value="MSLS" <%= cookies && cookies.program === "MSLS" ? "selected" : "" %>>
+                            MSLS - Master of Science in Library Science
+                        </option>
+                        <option value="MSIS" <%= cookies && cookies.program === "MSIS" ? "selected" : "" %>>
+                            MSIS - Master of Science in Information Science
+                        </option>
+                    </select>
                 </div>
                 <div>
                     <label for="specializationSelect" class="form-label">Specialization</label>
                     <select
-                        class="form10-select form-select"
-                        aria-label=".form-select example"
-                        id="specializationSelect"
-                        name="specialization"
-                        required
+                            class="form10-select form-select"
+                            aria-label=".form-select example"
+                            id="specializationSelect"
+                            name="specialization"
+                            required
                     >
-                    <% for (let specialization of specializations){ %>
-                        <option value="<%= specialization[0]+ ' - ' +specialization[1] %>" <%= cookies && cookies.specialization === String(specialization[0]) ? "selected" : {} %>><%= specialization[0] === 0 ? "None" : specialization[1] %></option>
-                    <% } %>
+                        <% for (let specialization of specializations){ %>
+                            <option value="<%= specialization[0] + ' - ' + specialization[1] %>" <%= cookies && cookies.specialization === String(specialization[0]) ? "selected" : {} %>><%= specialization[0] === 0 ? "None" : specialization[1] %></option>
+                        <% } %>
                     </select>
-                </div>           
+                </div>
                 <div>
                     <label for="capstoneSelect" class="form-label">Capstone Track</label>
-                    <select class="form10-select form-select" aria-label=".form-select example" id="capstoneSelect" name="capstone" required>
+                    <select class="form10-select form-select" aria-label=".form-select example" id="capstoneSelect"
+                            name="capstone" required>
                         <option value="research" <%= cookies && cookies.capstone === "research" ? "selected" : {} %>>
                             Independent Research
                         </option>
@@ -80,9 +81,12 @@
                 </div>
                 <div>
                     <label for="courseSelect" class="form-label">Course</label>
-                    <button type="button" class="button-show" onclick="manualInput()">Course not found? Enter course manually</button>
+                    <button type="button" class="button-show" onclick="manualInput()">Course not found? Enter course
+                        manually
+                    </button>
                     <div class="form-row" id="CourseSelection">
-                        <select class="form10-select form-select" aria-label=".form-select example" id="courseSelect" required>
+                        <select class="form10-select form-select" aria-label=".form-select example" id="courseSelect"
+                                required>
                             <% for (let course of courses) { %>
                                 <option value=<%= 0 %>>
                                     <%= `${course[0]} ${course[1]} - ${course[2]}` %>
@@ -98,7 +102,7 @@
                         </div>
                         <div>
                             <select class="form10-select form-select" aria-label=".form-select example"
-                                id="extraCourseBin"
+                                    id="extraCourseBin"
                             >
                                 <% for (let bin of bins) { %>
                                     <option value=<%= bin[0] %>>
@@ -107,7 +111,7 @@
                                 <% } %>
                             </select>
                             <select class="form10-select form-select" aria-label=".form-select example"
-                                id="extraCourseCredit"
+                                    id="extraCourseCredit"
                             >
                                 <option value=1>1 credit</option>
                                 <option value=1.5>1.5 credits</option>
@@ -130,21 +134,26 @@
                 <% if(cookies && cookies.course && cookies.course.length > 0){
                     let display;
                         for(let course of cookies.course.split('&&&').sort()){
-                            if(course.split(' - ').length===3){
-                                const splits = course.split(' - ');
-                                display = `${splits[0]} (${splits[1].split(': ')[1]}, ${splits[2].split(': ')[1]} ${splits[2].split(': ')[0]})`;
-                            }else {
-                                display = course;
-                            }%>
-                    <li class="list-group-item" id="<%= course %>"><%= display %>
-                        <button class="btn-remove" type="button" onclick="remove(this)">
-                            Remove
-                        </button>
-                    </li>
-                <% }}%>
+                    if (course.split(' - ').length === 3) {
+                        const splits = course.split(' - ');
+                        display = `${splits[0]} (${splits[1].split(': ')[1]}, ${splits[2].split(': ')[1]} ${splits[2].split(': ')[0].toLowerCase()}`;
+                        if (splits[2].split(': ')[1] !== "1") {
+                            display += "s)"
+                        }else{
+                            display+= ")"
+                        }
+                    } else {
+                        display = course;
+                    } %>
+                <li class="list-group-item" id="<%= course %>"><%= display %>
+                    <button class="btn-remove" type="button" onclick="remove(this)">
+                        Remove
+                    </button>
+                </li>
+                <% }} %>
             </ul>
             <div>
-                <button class="btn-remove" type="button" onclick="removeAll()">Remove All Courses </button>
+                <button class="btn-remove" type="button" onclick="removeAll()">Remove All Courses</button>
             </div>
         </div>
     </div>
@@ -194,7 +203,7 @@
     }
 
     function addExtraCourse() {
-        if(!document.getElementById("extraCourseSubject").value || !document.getElementById("extraCourseNumber").value){
+        if (!document.getElementById("extraCourseSubject").value || !document.getElementById("extraCourseNumber").value) {
             alert("Please enter course subject and course number.")
             return;
         }
@@ -207,8 +216,13 @@
         const courseBin = document.getElementById("extraCourseBin");
         const courseCredit = document.getElementById("extraCourseCredit").value.toUpperCase();
         const courseName = courseSubject + " " + courseNumber;
-        const courseValue = courseName + " (" + courseBin.options[courseBin.selectedIndex].text + ", "+ courseCredit + " Credits)";
-        const courseNameBin = courseName + " - Bin " + courseBin.selectedIndex + ": " + courseBin.options[courseBin.selectedIndex].text+ " - Credit: " + courseCredit;
+        let courseValue = courseName + " (" + courseBin.options[courseBin.selectedIndex].text + ", " + courseCredit;
+        if (courseCredit === "1") {
+            courseValue += " credit)"
+        } else {
+            courseValue += " credits)"
+        }
+        const courseNameBin = courseName + " - Bin " + courseBin.selectedIndex + ": " + courseBin.options[courseBin.selectedIndex].text + " - Credit: " + courseCredit;
         //const courseNodeText = document.createTextNode(courseNameBin);
         const courseNodeText = document.createTextNode(courseValue);
         const courseAdd = document.getElementById("courseAdd");
@@ -277,7 +291,7 @@
         save();
     }
 
-    function save(){
+    function save() {
         const courseAdd = document.getElementById("courseAdd");
         const program = document.getElementById("programSelect");
         const specialization = document.getElementById("specializationSelect");
@@ -288,20 +302,19 @@
         document.cookie = `capstone=${capstone.value}; expires=Thu, 01 Jan 2099 00:00:00 UTC; path=/`;
     }
 
-   function manualInput(){
+    function manualInput() {
         const block = document.getElementById('extraCourseSelection');
         const originBlock = document.getElementById('CourseSelection');
         const showButton = document.getElementsByClassName('button-show')[0];
-        if( block.style.display === "flex"){
+        if (block.style.display === "flex") {
             block.style.display = "none";
             originBlock.style.display = "flex";
-            showButton.style.color="rgb(54, 121, 255)";
-            showButton.textContent= "Course not found? Enter course manually"
-        }
-        else{
+            showButton.style.color = "rgb(54, 121, 255)";
+            showButton.textContent = "Course not found? Enter course manually"
+        } else {
             block.style.display = "flex";
             originBlock.style.display = "none";
-            showButton.textContent= "Back to course drop-down list"
+            showButton.textContent = "Back to course drop-down list"
         }
     }
 

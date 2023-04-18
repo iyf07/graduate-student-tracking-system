@@ -96,6 +96,11 @@ app.get("/degree-audit", async (req, res) => {
     capstone: studentInfo.capstone,
     specialization: selectedSpecialization[1],
   };
+  for(let key of Object.keys(data)){
+      data[key]['taken'].sort();
+      data[key]['recommend'].sort();
+  }
+
   res.render("degree-audit", { data, info });
 });
 

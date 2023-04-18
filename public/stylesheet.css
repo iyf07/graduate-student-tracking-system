@@ -237,6 +237,10 @@ td {
   font-size: 20px;
 }
 
+.left {
+  text-align: left;
+}
+
 @media screen and (max-width: 800px) {
   .block {
     flex-direction: column;
